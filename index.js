@@ -15,7 +15,7 @@ const knex = require('knex')({
     }
 });
 
-knex.raw("SELECT * FROM profiles").then(
+knex.raw("SELECT * FROM users").then(
     (prof) => console.log(prof) 
 ).catch(
     (err) => {console.log(err);})
