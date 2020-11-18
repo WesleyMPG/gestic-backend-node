@@ -4,6 +4,24 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const knex = require('knex')({
+    client: 'postgresql',
+    connection: {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database : process.env.DB_NAME,
+        port: process.env.DB_PORT
+    }
+});
+
+knex.raw("SELECT * FROM profiles").then(
+    (prof) => console.log(prof) 
+).catch(
+    (err) => {console.log(err);})
+.finally(
+    () => {knex.destroy();});
+
 //app.use(cors);
 app.use(express.json());
 
