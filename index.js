@@ -15,13 +15,9 @@ const knex = require('knex')({
         port: process.env.DB_PORT
     }
 });
-/*
-knex.raw("SELECT * FROM users").then(
-    (prof) => console.log(prof) 
-).catch(
-    (err) => {console.log(err);})
-.finally(
-    () => {knex.destroy();});*/
+
+const UserRepository = require('./repository/User');
+const userRepository = new UserRepository();
 
 function verifyJWT(req, res, next) {
     const token = req.headers['x-access-token'];
@@ -57,13 +53,13 @@ app.get('/tablets',function(req,res){
 app.post('/login', async (req, res, next) => {
     var { email, password } = req.body;
 
-    const userId = (await knex.select().from('users').where({
-        'user_email': email,
-        'user_password': password
-    })).map((user) => user.user_id)
-
-    if (userId.length > 0) {
-        const id = userId[0];
+    const user = await userRepository.getRow({
+        'email': email,
+        'password': password
+    })
+    console.log(user);
+    if (user) {
+        const id = user.id;
         const token = jwt.sign({ id }, process.env.SECRET, {
             expiresIn: 900
         });
@@ -75,20 +71,21 @@ app.post('/login', async (req, res, next) => {
 app.post('/register', async (req, res) => {
     let { body } = req;
     let profileId = (await knex.select().from('profiles').where({
-        'prof_tag': body.tag
+        prof_tag: body.tag
     })).map((profile) => profile.prof_id)
 
     if (profileId.length > 0) {
         profileId = profileId[0];
         try {
-            const createdUser = (await knex('users').insert({
-                prof_id: profileId,
-                user_name: body.name,
-                user_cpf: body.cpf,
-                user_email: body.email,
-                user_password: body.password
-            }).returning())
-            console.log(createdUser);
+            const createdUser = await userRepository.insertRow({
+                profileId,
+                name: body.name,
+                cpf: body.cpf,
+                email: body.email,
+                password: body.password
+
+            })
+            //console.log(createdUser);
             res.status(200).json(createdUser)
         } catch(err) {
             console.log(err);
