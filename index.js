@@ -65,23 +65,23 @@ app.post('/login', async (req, res, next) => {
     if (userId.length > 0) {
         const id = userId[0];
         const token = jwt.sign({ id }, process.env.SECRET, {
-            expiresIn: 100
+            expiresIn: 900
         });
         return res.json({auth: true, token: token});
     }
     res.status(500).json({message: 'Login invalido!'})
 })
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     let { body } = req;
     let profileId = (await knex.select().from('profiles').where({
-        prof_tag: body.tag
+        'prof_tag': body.tag
     })).map((profile) => profile.prof_id)
 
     if (profileId.length > 0) {
         profileId = profileId[0];
         try {
-            const createdUser = (await knex.insert({
+            const createdUser = (await knex('users').insert({
                 prof_id: profileId,
                 user_name: body.name,
                 user_cpf: body.cpf,
@@ -89,7 +89,9 @@ app.post('/register', (req, res) => {
                 user_password: body.password
             }).returning())
             console.log(createdUser);
-        } catch {
+            res.status(200).json(createdUser)
+        } catch(err) {
+            console.log(err);
             res.status(500).json({message: 'Dados inválidos!'})
         }
 
