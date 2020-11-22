@@ -5,9 +5,6 @@ const cors = require('cors');
 const app = express();
 const jwt = require('jsonwebtoken');
 
-const knexConfig = require('./knexfile')['development']
-const knex = require('knex')(knexConfig);
-
 const { UserService } = require('./services');
 const userService = new UserService();
 
@@ -51,8 +48,8 @@ app.post('/logout', (req, res) => {
 
 
 app.get('/test', async (req, res) => {
-    const result = await userRepository.deleteRows({
-        name: 'ivad2'
+    const result = await userRepository.getRows({
+        profileId: '3a2744c1-fa73-43f1-bceb-a8cee76e5f35'
     })
     
     console.log(result);

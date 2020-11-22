@@ -1,15 +1,7 @@
 require('dotenv/config');
 
-const knex = require('knex')({
-    client: 'postgresql',
-    connection: {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    }
-});
+const knexConfig = require('../knexfile')['development']
+const knex = require('knex')(knexConfig);
 
 class GenericRepository {
 
