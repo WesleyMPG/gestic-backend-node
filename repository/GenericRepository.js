@@ -1,6 +1,6 @@
 require('dotenv/config');
 
-const knexConfig = require('../knexfile')['development']
+const knexConfig = require('../config/knexfile')['development']
 const knex = require('knex')(knexConfig);
 
 class GenericRepository {

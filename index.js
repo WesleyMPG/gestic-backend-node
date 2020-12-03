@@ -7,23 +7,27 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const formData = require('form-data');
 const multer = require('multer');
-const multerConfig = require('./agoravai'); 
+const multerConfig = require('./config/multerConfig'); 
 const upload = multer(multerConfig);
+const swaggerUI = require('swagger-ui-express');
+const yaml = require('yamljs');
+const swaggerDocument = yaml.load('./config/swagger.yaml');
 
 const { UserService, FileService } = require('./services');
 const userService = new UserService();
 const fileService = new FileService();
 
-const verifyJWT = require('./configJWT');
+const verifyJWT = require('./config/configJWT');
 
 const UserRepository = require('./repository/User')
 const userRepository = new UserRepository();
 
 //app.use(cors);
 app.use(express.json());
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get('/', verifyJWT, function (req, res) {
-    res.send("Bem vindo a versão V0.0 do backend da aplicação < pending > !");
+    res.send("Bem vindo a versão V0.0 do backend da aplicação GestIC!");
 });
 
 app.post('/login', async (req, res, next) => {

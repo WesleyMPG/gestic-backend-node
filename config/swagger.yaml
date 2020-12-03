@@ -1,0 +1,227 @@
+swagger: "2.0"
+info:
+  description: "GestIC App API documentation"
+  version: "1.0.0"
+  title: "GestIC API"
+host: "localhost:3333"
+tags:
+- name: "User"
+  description: "Operations related to users"
+- name: "File"
+  description: "Operations related to file manipulation"
+paths:
+  /login:
+    post:
+      tags:
+      - "User"
+      summary: "Authentication and authorization of a registered user"
+      description: ""
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters used in user authentication"
+        required: true
+        schema:
+         type: "object"
+         properties:
+            email:
+              type: "string"
+            password:
+              type: "string"
+      responses:
+        "200":
+          description: "Successful login"
+          schema:
+            type: "object"
+            properties:
+              auth:
+                type: "boolean"
+              token:
+                type: "string"
+        "500":
+          description: "Unsuccessful login"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /register:
+    post:
+      tags:
+      - "User"
+      summary: "Register a new user"
+      description: "Tag can be: ALUN or PROF or COOR"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information required for registration"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            cpf:
+              type: "string"
+            email:
+              type: "string"
+            password:
+              type: "string"
+            tag:
+              type: "string"
+              example: "ALUN"
+      responses:
+        "200":
+          description: "Successful registration"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              profileId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              cpf:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
+        "500":
+          description: "Unsuccessful registration"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /file:
+    post:
+      tags: 
+      - "File"
+      summary: "Upload a file"
+      produces:
+      - "application/json"
+      consumes:
+      - "multipart/form-data"
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          required: true
+          description: The file to upload.
+        - in: formData
+          name: name
+          type: string
+          required: true
+          description: File name.
+        - in: formData
+          name: tag
+          type: string
+          required: true
+          description: File tag.
+      responses:
+        "200":
+          description: "Successful upload"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              tag:
+                type: "string"
+              ref:
+                type: "string"
+        "500":
+          description: "Unsuccessful upload"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    get:
+      tags:
+      - "File"
+      summary: "Returns list of file references"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            type: "object"
+            properties:
+              tag:
+                type: "string"
+      responses:
+        "200":
+          description: "Successfully displayed all file references"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                tag:
+                  type: "string"
+                name:
+                  type: "string"
+                ref:
+                  type: "string"
+        "500":
+          description: "Could not display all file references"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /download-file:
+    get:
+      tags: 
+      - "File"
+      summary: "Download a file"
+      produces:
+      - "application/pdf"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              ref:
+                type: "string"
+      responses:
+        "200":
+          description: "Successful download"
+          schema:
+            type: "file"
+            produces: "application/pdf"
+            example: "file.pdf"
+        "500":
+          description: "Unsuccessful download"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  

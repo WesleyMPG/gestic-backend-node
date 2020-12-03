@@ -20,6 +20,9 @@
     "form-data": "3.0.0",
     "multer": "1.4.2",
     "crypto": "1.0.1",
-    "path": "0.12.7"
+    "path": "0.12.7",
+    "swagger-autogen": "1.2.5",
+    "swagger-ui-express": "4.1.5",
+    "yamljs": "0.3.0"
   }
 }
