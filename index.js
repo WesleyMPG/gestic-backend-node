@@ -22,7 +22,12 @@ const verifyJWT = require('./config/configJWT');
 const UserRepository = require('./repository/User')
 const userRepository = new UserRepository();
 
-//app.use(cors);
+var corsOptions = {
+    origin: 'http://localhost:4200',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
@@ -91,6 +96,13 @@ app.get('/test', async (req, res) => {
     res.status(500).json(result);
 })
 
-app.listen(process.env.SERVER_PORT, function () {
+const server = app.listen(process.env.SERVER_PORT, function () {
     console.log(`Servidor ativo na porta ${process.env.SERVER_PORT}`);
+});
+
+process.on('SIGINT', () => {
+    process.kill(process.pid)
+    server.close(() => {
+        console.log('Process terminated')
+    });
 });
