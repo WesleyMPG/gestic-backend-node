@@ -59,7 +59,19 @@ class User {
             throw err;
         }
     }
-    
+
+    getUserById = async ({
+        id
+    }) => {
+        try {
+            const user = await this.userRepository.getRow({ id });
+            const profile = await this.profileRepository.getRow({ id:user.profileId });
+            return {...user,tag:profile.tag,password:'*******'};
+        } catch (err) {
+            throw err;
+        }
+    }
+
 }
 
 module.exports = User;

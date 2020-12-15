@@ -13,9 +13,10 @@ const swaggerUI = require('swagger-ui-express');
 const yaml = require('yamljs');
 const swaggerDocument = yaml.load('./config/swagger.yaml');
 
-const { UserService, FileService } = require('./services');
+const { UserService, FileService, ProjectService } = require('./services');
 const userService = new UserService();
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 const verifyJWT = require('./config/configJWT');
 
@@ -76,6 +77,56 @@ app.get('/download-file', function(req, res){
 app.get('/file',async (req,res) => {
     try {
         const result = await fileService.getFiles(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.post('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.insertProject(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.get('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.getProjects();
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.put('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.updateProject(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.delete('/project/:id', async(req,res) =>{
+    try {
+        const result = await projectService.deleteProject(req.params);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.get('/project/:id', async(req,res) =>{
+    try {
+        const result = await projectService.getProjectById(req.params);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

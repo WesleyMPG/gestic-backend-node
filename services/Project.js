@@ -1,52 +1,97 @@
 require('dotenv/config');
 
 const ProjectRepository = require('../repository/Project')
+const UserService = require("../services/User")
 
 class Project {
     constructor() {
         this.projectRepository = new ProjectRepository();
-        
+        this.userService = new UserService();
+
     }
 
-   insertProject = async ({
-      name,
-      description,
-      userId
-   }) => {
-       try {
-           
-           
-       } catch (err) {
-           throw err;
-       }
-   }
-
-    register = async ({
-        tag,
+    insertProject = async ({
         name,
-        cpf,
-        email,
-        password
+        description,
+        userId
     }) => {
         try {
-            const profile = await this.profileRepository.getRow({ tag });
+            const user = await this.userService.getUserById({ id: userId });
+            if (!user || (user.tag != 'COOR' && user.tag != 'PROF')) {
+                throw new Error('Invalid user');
+            }
 
-            if (!profile) throw new Error('Invalid tag.');
-
-            const createdUser = await this.userRepository.insertRow({
-                profileId: profile.id,
+            const project = await this.projectRepository.insertRow({
                 name,
-                cpf,
-                email,
-                password
+                description,
+                userId
             });
+            return project;
 
-            return createdUser;
         } catch (err) {
             throw err;
         }
     }
-    
+    getProjects = async () => {
+        try {
+            const projects = await this.projectRepository.getRows();
+            return projects;
+
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    updateProject = async ({
+        id,
+        name,
+        description,
+        userId
+
+    }) => {
+        try {
+            if (userId) {
+                const user = await this.userService.getUserById({ id: userId });
+                if (!user || (user.tag != 'COOR' && user.tag != 'PROF')) {
+                    throw new Error('Invalid user');
+                }
+            }
+            const updatedProject = await this.projectRepository.updateRow(
+                { id },
+                {
+                    name,
+                    description,
+                    userId
+                }
+            );
+            return updatedProject;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    deleteProject = async ({
+        id
+    }) => {
+        try {
+            const deletedProject = await this.projectRepository.deleteRow({id});
+            return deletedProject;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    getProjectById = async ({
+        id
+    }) => {
+        try {
+            const selectedProject = await this.projectRepository.getRow({id});
+            return selectedProject;
+        } catch (err) {
+            throw err;
+        }
+    }
+
 }
 
 module.exports = Project;
