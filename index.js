@@ -8,7 +8,7 @@ const fs = require('fs');
 const formData = require('form-data');
 const multer = require('multer');
 const multerConfig = require('./config/multerConfig'); 
-const upload = multer(multerConfig);
+const upload = multer(multerConfig.storage);
 const swaggerUI = require('swagger-ui-express');
 const yaml = require('yamljs');
 const swaggerDocument = yaml.load('./config/swagger.yaml');
@@ -58,6 +58,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/file',upload.single('file'), async (req, res) => {
     const { file } = req;
+    console.log(file);
     try {
         const result = await fileService.insertFile({...req.body,ref:req.file.filename});
         res.status(200).json(result);
@@ -68,7 +69,7 @@ app.post('/file',upload.single('file'), async (req, res) => {
 })
 
 app.get('/download-file', function(req, res){
-    const file = `${__dirname}/tmp/uploads/${req.body.ref}`;
+    const file = `${multerConfig.uploadsPath}/${req.body.ref}`;
     res.status(200).download(file);
   });
 
