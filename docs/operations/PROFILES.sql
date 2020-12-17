@@ -2,7 +2,7 @@
 DELETE from profiles
 
 --SELECT
-SELECT * FROM profiles
+--SELECT * FROM profiles
 
 --INSERT
 INSERT INTO profiles VALUES ('3a2744c1-fa73-43f1-bceb-a8cee76e5f35', 'ALUN', 'ALUNO');
