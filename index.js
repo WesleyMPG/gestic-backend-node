@@ -8,14 +8,15 @@ const fs = require('fs');
 const formData = require('form-data');
 const multer = require('multer');
 const multerConfig = require('./config/multerConfig'); 
-const upload = multer(multerConfig);
+const upload = multer(multerConfig.storage);
 const swaggerUI = require('swagger-ui-express');
 const yaml = require('yamljs');
 const swaggerDocument = yaml.load('./config/swagger.yaml');
 
-const { UserService, FileService } = require('./services');
+const { UserService, FileService, ProjectService } = require('./services');
 const userService = new UserService();
 const fileService = new FileService();
+const projectService = new ProjectService();
 
 const verifyJWT = require('./config/configJWT');
 
@@ -58,6 +59,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/file',upload.single('file'), async (req, res) => {
     const { file } = req;
+    console.log(file);
     try {
         const result = await fileService.insertFile({...req.body,ref:req.file.filename});
         res.status(200).json(result);
@@ -68,13 +70,63 @@ app.post('/file',upload.single('file'), async (req, res) => {
 })
 
 app.get('/download-file', function(req, res){
-    const file = `${__dirname}/tmp/uploads/${req.body.ref}`;
+    const file = `${multerConfig.uploadsPath}/${req.body.ref}`;
     res.status(200).download(file);
   });
 
 app.get('/file',async (req,res) => {
     try {
         const result = await fileService.getFiles(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.post('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.insertProject(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.get('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.getProjects();
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.put('/project', async (req,res) =>{
+    try {
+        const result = await  projectService.updateProject(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.delete('/project/:id', async(req,res) =>{
+    try {
+        const result = await projectService.deleteProject(req.params);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message:err.message});
+    }
+})
+
+app.get('/project/:id', async(req,res) =>{
+    try {
+        const result = await projectService.getProjectById(req.params);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

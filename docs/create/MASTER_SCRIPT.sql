@@ -1,0 +1,86 @@
+DROP TABLE IF EXISTS PROJECT;
+DROP TABLE IF EXISTS USERS;
+DROP TABLE IF EXISTS PROFILES;
+DROP TABLE IF EXISTS FILE;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+--  TABLES
+CREATE TABLE PROFILES (
+  PROF_ID UUID DEFAULT uuid_generate_v4 (),
+  PROF_TAG VARCHAR(200) NOT NULL UNIQUE,
+  PROF_NAME VARCHAR(200) NOT NULL,
+  CONSTRAINT PK_PROF PRIMARY KEY (PROF_ID)
+);
+CREATE TABLE USERS (
+  USER_ID UUID DEFAULT uuid_generate_v4 (),
+  PROF_ID UUID NOT NULL,
+  USER_NAME VARCHAR(200) NOT NULL,
+  USER_CPF VARCHAR(15) NOT NULL UNIQUE,
+  USER_EMAIL VARCHAR(200) NOT NULL UNIQUE,
+  USER_PASSWORD VARCHAR(200) NOT NULL,
+  CONSTRAINT PK_USER PRIMARY KEY (USER_ID),
+  CONSTRAINT FK_USER_PROF FOREIGN KEY (PROF_ID) REFERENCES PROFILES (PROF_ID)
+);
+CREATE TABLE PROJECT (
+  PROJ_ID UUID DEFAULT uuid_generate_v4 (),
+  PROJ_NAME VARCHAR(200) NOT NULL UNIQUE,
+  PROJ_USER UUID NOT NULL,
+  PROJ_DESCRIPTION VARCHAR(200) NOT NULL,
+  CONSTRAINT PK_PROJ PRIMARY KEY (PROJ_ID),
+  CONSTRAINT FK_PROJ_USER FOREIGN KEY (PROJ_USER) REFERENCES USERS (USER_ID)
+);
+CREATE TABLE FILE (
+  FILE_ID UUID DEFAULT uuid_generate_v4 (),
+  FILE_TAG VARCHAR(200) NOT NULL,
+  FILE_NAME VARCHAR(200) NOT NULL,
+  FILE_REF VARCHAR(200) NOT NULL UNIQUE,
+  CONSTRAINT PK_FILE PRIMARY KEY (FILE_ID)
+);
+
+-- INSERT
+  -- PROFILES
+INSERT INTO profiles VALUES ('3a2744c1-fa73-43f1-bceb-a8cee76e5f35', 'ALUN', 'ALUNO');
+INSERT INTO profiles VALUES ('0868fcf1-2ade-43f0-806c-2952409c579a', 'PROF', 'PROFESSOR');
+INSERT INTO profiles VALUES ('21f3392d-fbdc-4cb0-8e3c-5a11d6c069f1', 'COOR', 'COORDENADOR');
+  -- USERS
+INSERT INTO users VALUES (
+  'f9584d5c-b11e-4148-8e12-e124782f9b9c', 
+  '3a2744c1-fa73-43f1-bceb-a8cee76e5f35',
+  'aluno1',
+  '12345678910',
+  'aluno1@ic.ufal.br',
+  'aluno111');
+INSERT INTO users VALUES (
+  '2e39fcf9-46cc-48d4-b24a-af755ea80117', 
+  '3a2744c1-fa73-43f1-bceb-a8cee76e5f35',
+  'aluno2',
+  '321.654.987-11',
+  'aluno2@ic.ufal.br',
+  'aluno222');  
+INSERT INTO users VALUES (
+  'f5884dee-ec53-4494-915a-e1676af78d15', 
+  '0868fcf1-2ade-43f0-806c-2952409c579a',
+  'professor1',
+  '111.222.333-23',
+  'prof1@ic.ufal.br',
+  'prof111');  
+INSERT INTO users VALUES (
+  '6bbe1d58-8b7d-4209-8fa7-a12522794708', 
+  '21f3392d-fbdc-4cb0-8e3c-5a11d6c069f1',
+  'professor2',
+  '11111111111',
+  'prof2@ic.ufal.br',
+  'prof222');
+  -- PROJECT
+INSERT INTO project VALUES (
+  '61e39696-434a-4e2b-89a0-4489751e7834', 
+  'MusIC',
+  'f5884dee-ec53-4494-915a-e1676af78d15',
+  'Grupo de amantes de música com o intuito de conhecer gente com os mesmo interesses e fazer muita música!');
+INSERT INTO project VALUES (
+  'a2c70423-b13b-4850-a7df-ee164a2cd40f', 
+  'Secomp',
+  '6bbe1d58-8b7d-4209-8fa7-a12522794708',
+  'A Semana de Computação do IC tem o intuito de levar bastante informação para os membros da comunidade e gerar discussões sobre os mais variados assuntos no campus.');
+

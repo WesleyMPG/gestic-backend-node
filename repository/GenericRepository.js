@@ -19,7 +19,7 @@ class GenericRepository {
     }
 
     // get multiple objects
-    async getRows(filter) {
+    async getRows(filter = {}) {
         const fetchedRows = (await knex
             .select()
             .from(this.builder.tableName)

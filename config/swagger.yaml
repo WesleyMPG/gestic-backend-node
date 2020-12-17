@@ -9,6 +9,8 @@ tags:
   description: "Operations related to users"
 - name: "File"
   description: "Operations related to file manipulation"
+- name: "Project"
+  description: "Operations related to active projects"
 paths:
   /login:
     post:
@@ -225,3 +227,202 @@ paths:
             properties:
               message:
                 type: "string"  
+  /project:
+    get:
+      tags:
+      - "Project"
+      summary: "Get a list of all active projects"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Obtained a list of all active projects"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                userId:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                description:
+                  type: "string"
+        "500":
+          description: "Could not obtain a list of all active projects"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
+    post:
+      tags:
+      - "Project"
+      summary: "Insert a project"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+              description:
+                type: "string"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Inserted a project"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+        "500":
+          description: "Could not insert a project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
+    put:
+      tags:
+      - "Project"
+      summary: " Update project information"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Sucessfully updated a project"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+        "500":
+          description: "Could not update a project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
+  /project/{id}:
+    get:
+      tags:
+        - "Project"
+      summary: "Get project information"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Obtained a project"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+        "500":
+          description: "Could not obtain a project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Project"
+      summary: "Delete project"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successfully removed a project"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+        "500":
+          description: "Could not remove a project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+        
+
