@@ -40,6 +40,20 @@ paths:
           schema:
             type: "object"
             properties:
+              id:
+                type: "string"
+                format: "uuid"
+              profileId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              cpf:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
               auth:
                 type: "boolean"
               token:

@@ -25,7 +25,7 @@ class User {
                 const token = jwt.sign({ id }, process.env.SECRET, {
                     expiresIn: 900
                 });
-                return { auth: true, token: token };
+                return {...user, auth: true, token: token };
             } else {
                 throw new Error('Invalid Login!');
             }
