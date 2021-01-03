@@ -10,5 +10,5 @@ CREATE TABLE users (
   user_email VARCHAR(200) NOT NULL UNIQUE,
   user_password VARCHAR(200) NOT NULL,
   CONSTRAINT pk_user PRIMARY KEY (user_id),
-  CONSTRAINT fk_user_prof FOREIGN KEY (prod_id) REFERENCES profiles (prod_id) ON DELETE CASCADE
+  CONSTRAINT fk_user_prof FOREIGN KEY (prod_id) REFERENCES profiles (prof_id) ON DELETE CASCADE
 );

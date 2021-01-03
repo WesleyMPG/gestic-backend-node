@@ -7,5 +7,5 @@ CREATE TABLE file (
   file_tag VARCHAR(200) NOT NULL,
   file_name VARCHAR(200) NOT NULL,
   file_ref VARCHAR(200) NOT NULL UNIQUE,
-  CONSTRAINT PK_file PRIMARY KEY (file_id)
+  CONSTRAINT pk_file PRIMARY KEY (file_id)
 );
