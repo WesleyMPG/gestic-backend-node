@@ -8,7 +8,7 @@ INSERT INTO users VALUES (
   'aluno1',
   '12345678910',
   'aluno1@ic.ufal.br',
-  'aluno111');
+  '$2b$10$keHeWU4JkZ6uuUub0bw1lujtOS9vk4yY3Zd6TL7OTF/1fCJNdm4HS');
 
 INSERT INTO users VALUES (
   '2e39fcf9-46cc-48d4-b24a-af755ea80117', 
@@ -16,7 +16,7 @@ INSERT INTO users VALUES (
   'aluno2',
   '321.654.987-11',
   'aluno2@ic.ufal.br',
-  'aluno222');
+  '$2b$10$03ndXtmrxv8Z5RDd6iqi/uXzYdfhmFymQ38DP6sPoQiln7QTyLJCi');
   
 INSERT INTO users VALUES (
   'f5884dee-ec53-4494-915a-e1676af78d15', 
@@ -24,7 +24,7 @@ INSERT INTO users VALUES (
   'professor1',
   '111.222.333-23',
   'prof1@ic.ufal.br',
-  'prof111');
+  '$2b$10$GV4TdmjfoVG8PsjFjr1udO6ly80hkDQKR0trSMKTUKcPUMx9uEHSG');
   
 INSERT INTO users VALUES (
   '6bbe1d58-8b7d-4209-8fa7-a12522794708', 
@@ -32,4 +32,4 @@ INSERT INTO users VALUES (
   'professor2',
   '11111111111',
   'prof2@ic.ufal.br',
-  'prof222');
+  '$2b$10$6l9FJZ6F/2z.3ZgUxg.rs.6fPHFl6UXhYzcegD2NOPb8/EkynVVpu');
