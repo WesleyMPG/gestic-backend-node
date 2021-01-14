@@ -14,10 +14,11 @@ const yaml = require('yamljs');
 const swaggerDocument = yaml.load('./config/swagger.yaml');
 const bcrypt = require('bcrypt')
 
-const { UserService, FileService, ProjectService } = require('./services');
+const { UserService, FileService, ProjectService, ClassGroupService } = require('./services');
 const userService = new UserService();
 const fileService = new FileService();
 const projectService = new ProjectService();
+const classGroupService = new ClassGroupService();
 
 const verifyJWT = require('./config/configJWT');
 
@@ -134,6 +135,67 @@ app.get('/project/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 })
+
+app.post('/class-group', async(req, res) => {
+    try {
+        const result = await classGroupService.insertClassGroup(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
+app.get('/class-group', async(req, res) => {
+    try {
+        const result = await classGroupService.getClassGroups();
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
+app.put('/class-group', async(req,res) => {
+    try {
+        const result = await classGroupService.updateClassGroup(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
+app.delete('/class-group', async(req,res) => {
+    try {
+        const result = await classGroupService.deleteClassGroups();
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
+app.get('/class-group/:id', async(req, res) => {
+    try {
+        const result = await classGroupService.getClassGroupById(req.params);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
+app.delete('/class-group/:id', async(req,res) => {
+    try {
+        const result = await classGroupService.deleteClassGroupById(req.params);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message});
+    }
+})
+
 
 app.post('/logout', (req, res) => {
     res.json({ auth: false, token: null });

@@ -11,6 +11,8 @@ tags:
   description: "Operations related to file manipulation"
 - name: "Project"
   description: "Operations related to active projects"
+- name: "Class Group"
+  description: "Operations related to class groups"
 paths:
   /login:
     post:
@@ -438,5 +440,290 @@ paths:
             properties:
               message:
                 type: "string"
+  /class-group:
+    get:
+      tags:
+      - "Class Group"
+      summary: "Get a list of all class groups"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Obtained a list of all class groups"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                code:
+                  type: "string"
+                codeClassroom:
+                  type: "string"
+                linkClassroom:
+                  type: "string"
+                linkMeets:
+                  type: "string"
+                linkWpp:
+                  type: "string"
+                linkTel:
+                  type: "string"                          
+        "500":
+          description: "Could not obtain a list of all class groups"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
+    post:
+      tags:
+      - "Class Group"
+      summary: "Insert a class group"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"            
+      responses:
+        "200":
+          description: "Inserted a class group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"                 
+        "500":
+          description: "Could not insert a class group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
+    put:
+      tags:
+      - "Class Group"
+      summary: " Update class group information"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"            
+      responses:
+        "200":
+          description: "Sucessfully updated a class group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"                 
+        "500":
+          description: "Could not update a class group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Class Group"
+      summary: "Delete all class groups"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Successfully removed all class groups"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                code:
+                  type: "string"
+                codeClassroom:
+                  type: "string"
+                linkClassroom:
+                  type: "string"
+                linkMeets:
+                  type: "string"
+                linkWpp:
+                  type: "string"
+                linkTel:
+                  type: "string"     
+        "500":
+          description: "Could not remove all class groups"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"                
+  /class-group/{id}:
+    get:
+      tags:
+        - "Class Group"
+      summary: "Get class group information"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Obtained a class group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"     
+        "500":
+          description: "Could not obtain a class group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Class Group"
+      summary: "Delete class group"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successfully removed a class group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              code:
+                type: "string"
+              codeClassroom:
+                type: "string"
+              linkClassroom:
+                type: "string"
+              linkMeets:
+                type: "string"
+              linkWpp:
+                type: "string"
+              linkTel:
+                type: "string"     
+        "500":
+          description: "Could not remove a class group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"  
         
 
