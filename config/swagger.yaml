@@ -56,6 +56,8 @@ paths:
                 type: "string"
               password:
                 type: "string"
+              status:
+                type: "boolean"  
               auth:
                 type: "boolean"
               token:
@@ -116,6 +118,8 @@ paths:
                 type: "string"
               password:
                 type: "string"
+              status:
+                type: "boolean"  
         "500":
           description: "Unsuccessful registration"
           schema:
@@ -123,6 +127,187 @@ paths:
             properties:
               message:
                 type: "string"
+  /user:
+    get:
+      tags:
+      - "User"
+      summary: "Get users with status: false"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Returned the list of users with status: false"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                profileId:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                cpf:
+                  type: "string"
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+                status:
+                  type: "boolean"
+                  example: false  
+        "500":
+          description: "Could not return a list of user with status: false"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    put:
+      tags:
+      - "User"
+      summary: "Update user information"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information required for user update"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            id:
+              type: "string"
+              format: "uuid"
+            name:
+              type: "string"
+      responses:
+        "200":
+          description: "Successful update"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              profileId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              cpf:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
+              status:
+                type: "boolean"  
+        "500":
+          description: "Unsuccessful update"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"              
+  /approve-user:
+    put:
+      tags:
+      - "User"
+      summary: "Update multiple user status"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information required for user update"
+        required: true
+        schema:
+          type: "array"
+          items:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "Successful update"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                profileId:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                cpf:
+                  type: "string"
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+                status:
+                  type: "boolean"  
+        "500":
+          description: "Unsuccessful update"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /approve-user/{id}:
+    put:
+      tags:
+      - "User"
+      summary: "Update user status"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successful update"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              profileId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              cpf:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
+              status:
+                type: "boolean"  
+        "500":
+          description: "Unsuccessful update"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"                                                            
   /file:
     post:
       tags: 

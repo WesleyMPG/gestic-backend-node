@@ -10,7 +10,8 @@ class User extends GenericBuilder {
             ['name', 'user_name'],
             ['cpf', 'user_cpf'],
             ['email', 'user_email'],
-            ['password', 'user_password']
+            ['password', 'user_password'],
+            ['status', 'user_status']
         ];
     }
 }

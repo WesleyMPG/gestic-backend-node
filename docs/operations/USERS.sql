@@ -8,7 +8,9 @@ INSERT INTO users VALUES (
   'aluno1',
   '12345678910',
   'aluno1@ic.ufal.br',
-  '$2b$10$keHeWU4JkZ6uuUub0bw1lujtOS9vk4yY3Zd6TL7OTF/1fCJNdm4HS');
+  '$2b$10$keHeWU4JkZ6uuUub0bw1lujtOS9vk4yY3Zd6TL7OTF/1fCJNdm4HS',
+  true
+  );
 
 INSERT INTO users VALUES (
   '2e39fcf9-46cc-48d4-b24a-af755ea80117', 
@@ -16,7 +18,9 @@ INSERT INTO users VALUES (
   'aluno2',
   '321.654.987-11',
   'aluno2@ic.ufal.br',
-  '$2b$10$03ndXtmrxv8Z5RDd6iqi/uXzYdfhmFymQ38DP6sPoQiln7QTyLJCi');
+  '$2b$10$03ndXtmrxv8Z5RDd6iqi/uXzYdfhmFymQ38DP6sPoQiln7QTyLJCi',
+  true
+  );
   
 INSERT INTO users VALUES (
   'f5884dee-ec53-4494-915a-e1676af78d15', 
@@ -24,7 +28,9 @@ INSERT INTO users VALUES (
   'professor1',
   '111.222.333-23',
   'prof1@ic.ufal.br',
-  '$2b$10$GV4TdmjfoVG8PsjFjr1udO6ly80hkDQKR0trSMKTUKcPUMx9uEHSG');
+  '$2b$10$GV4TdmjfoVG8PsjFjr1udO6ly80hkDQKR0trSMKTUKcPUMx9uEHSG',
+  true
+  );
   
 INSERT INTO users VALUES (
   '6bbe1d58-8b7d-4209-8fa7-a12522794708', 
@@ -32,4 +38,16 @@ INSERT INTO users VALUES (
   'professor2',
   '11111111111',
   'prof2@ic.ufal.br',
-  '$2b$10$6l9FJZ6F/2z.3ZgUxg.rs.6fPHFl6UXhYzcegD2NOPb8/EkynVVpu');
+  '$2b$10$6l9FJZ6F/2z.3ZgUxg.rs.6fPHFl6UXhYzcegD2NOPb8/EkynVVpu',
+  true
+  );
+
+INSERT INTO users VALUES (
+  'fe3ccd38-d6e5-409a-9eef-1ec1ef600a89', 
+  'd73ceaa9-4306-47de-9bab-35bafe0db9d3',
+  'monitor1',
+  '111.222.333-43',
+  'mon1@ic.ufal.br',
+  '$2b$10$8vhelS4QqxakdLi0HHeAPOnI2XYL1Qr.RyHntTbBvKs3T.rWxxIaG',
+  true
+  );  

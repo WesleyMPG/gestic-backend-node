@@ -44,10 +44,50 @@ app.post('/login', async (req, res, next) => {
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        console.log(err.message);
         res.status(500).json({ message: err.message });
     }
 })
+
+app.put('/approve-user/:id', async (req, res) => {
+    try {
+        const result = await userService.approveUserById(req.params);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: err.message});
+    }
+})
+
+app.put('/approve-user', async (req,res) => {
+    try {
+        const result = await userService.approveMultipleUsersById(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: err.message});
+    }
+})
+
+app.put('/user', async (req,res) => {
+    try {
+        const result = await userService.updateUser(req.body);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: err.message});
+    }
+})
+
+app.get('/user', async (req,res) => {
+    try {
+        const result = await userService.getListOfUsersByStatus();
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: err.message});
+    }
+})
+
 
 app.post('/register', async (req, res) => {
     try {

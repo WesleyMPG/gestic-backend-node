@@ -34,7 +34,7 @@ class User {
                 email
             })
 
-            if (user && await this._validatePassword({ password, passHash: user.password })) {
+            if (user && await this._validatePassword({ password, passHash: user.password }) && user.status) {
                 const id = user.id;
                 const token = jwt.sign({ id }, process.env.SECRET, {
                     expiresIn: 900
@@ -67,7 +67,8 @@ class User {
                 name,
                 cpf,
                 email,
-                password
+                password,
+                status: false
             });
 
             return {
@@ -86,6 +87,60 @@ class User {
             const user = await this.userRepository.getRow({ id });
             const profile = await this.profileRepository.getRow({ id: user.profileId });
             return { ...user, tag: profile.tag, password: '*******' };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    getListOfUsersByStatus = async () => {
+        try {
+            const users = await this.userRepository.getRows({status: false});
+            return users.map(user => ({...user, password: '*******'}));
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    updateUser = async ({
+        id,
+        name,
+    }) => {
+        try {
+            const user = await this.userRepository.getRow({ id });
+            if (!user) throw new Error('User not found.');
+            const updatedUser = await this.userRepository.updateRow({id},{name});
+            return updatedUser;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    approveUserById = async ({
+        id
+    }) => {
+        try {
+            const user = await this.userRepository.getRow({ id });
+            if (!user) throw new Error('User not found.');
+            const approvedUser = await this.userRepository.updateRow({ id }, { status: true });
+            return approvedUser;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    approveMultipleUsersById = async ({
+        ids
+    }) => {
+        try {
+            let users = [];
+            let tempUser;
+            for (const id of ids) {
+                try {
+                    tempUser = await this.approveUserById({ id });
+                    users.push(tempUser);
+                } catch (err) { }
+            }
+            return users;
         } catch (err) {
             throw err;
         }
