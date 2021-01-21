@@ -35,8 +35,8 @@ class User {
             })
 
             if (user && await this._validatePassword({ password, passHash: user.password }) && user.status) {
-                const id = user.id;
-                const token = jwt.sign({ id }, process.env.SECRET, {
+                const { id, profileId } = user;
+                const token = jwt.sign({ id, profileId }, process.env.SECRET, {
                     expiresIn: 900
                 });
                 return { ...user, auth: true, token: token, password: '*******' };
@@ -94,8 +94,8 @@ class User {
 
     getListOfUsersByStatus = async () => {
         try {
-            const users = await this.userRepository.getRows({status: false});
-            return users.map(user => ({...user, password: '*******'}));
+            const users = await this.userRepository.getRows({ status: false });
+            return users.map(user => ({ ...user, password: '*******' }));
         } catch (err) {
             throw err;
         }
@@ -108,8 +108,8 @@ class User {
         try {
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
-            const updatedUser = await this.userRepository.updateRow({id},{name});
-            return updatedUser;
+            const updatedUser = await this.userRepository.updateRow({ id }, { name });
+            return {...updatedUser, password: '*******'};
         } catch (err) {
             throw err;
         }
@@ -122,7 +122,7 @@ class User {
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
             const approvedUser = await this.userRepository.updateRow({ id }, { status: true });
-            return approvedUser;
+            return {...approvedUser, password: '*******'};
         } catch (err) {
             throw err;
         }

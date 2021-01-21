@@ -35,10 +35,10 @@ INSERT INTO users VALUES (
 INSERT INTO users VALUES (
   '6bbe1d58-8b7d-4209-8fa7-a12522794708', 
   '21f3392d-fbdc-4cb0-8e3c-5a11d6c069f1',
-  'professor2',
+  'coordenador1',
   '11111111111',
-  'prof2@ic.ufal.br',
-  '$2b$10$6l9FJZ6F/2z.3ZgUxg.rs.6fPHFl6UXhYzcegD2NOPb8/EkynVVpu',
+  'coordenador1@ic.ufal.br',
+  '$2b$10$KeWzSTU9ZK98bdHJzQzO9OjukXfG1IZdvrFc2/dyKLkLxny.yqYiO',
   true
   );
 

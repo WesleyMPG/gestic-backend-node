@@ -35,6 +35,7 @@ app.use(express.json());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get('/', verifyJWT, function (req, res) {
+    console.log(req);
     res.send("Bem vindo a versão V0.0 do backend da aplicação GestIC!");
 });
 

@@ -10,6 +10,7 @@ function verifyJWT(req, res, next) {
       if (err) return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });      
       // se tudo estiver ok, salva no request para uso posterior
       req.userId = decoded.id;
+      req.profileId = decoded.profileId;
       next();
     });
 }
