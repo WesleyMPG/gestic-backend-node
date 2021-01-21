@@ -35,7 +35,6 @@ app.use(express.json());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get('/', verifyJWT, function (req, res) {
-    console.log(req);
     res.send("Bem vindo a versão V0.0 do backend da aplicação GestIC!");
 });
 
@@ -102,7 +101,6 @@ app.post('/register', async (req, res) => {
 
 app.post('/file', upload.single('file'), async (req, res) => {
     const { file } = req;
-    console.log(file);
     try {
         const result = await fileService.insertFile({ ...req.body, ref: req.file.filename });
         res.status(200).json(result);
