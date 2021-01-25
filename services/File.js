@@ -8,11 +8,15 @@ class File {
     }
 
     insertFile = async ({
+        token,
         name,
         tag,
         ref
     }) => {
         try {
+
+            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             const insertedFile = await this.fileRepository.insertRow({
                 name,
                 tag,
@@ -26,9 +30,13 @@ class File {
     }
 
     getFiles = async ({
+        token,
         tag = null
     }) => {
         try{
+
+            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            
             const files = await this.fileRepository.getRows({tag});
             return files;
         } catch(err) {

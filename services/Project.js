@@ -1,7 +1,7 @@
 require('dotenv/config');
 
 const ProjectRepository = require('../repository/Project')
-const UserService = require("../services/User")
+const UserService = require("./User")
 
 class Project {
     constructor() {
@@ -11,13 +11,17 @@ class Project {
     }
 
     insertProject = async ({
+        token,
         name,
         description,
         userId
     }) => {
         try {
+
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             const user = await this.userService.getUserById({ id: userId });
-            if (!user || (user.tag != 'COOR' && user.tag != 'PROF')) {
+            if (!user || (user.profileTag != 'COOR' && user.profileTag != 'PROF')) {
                 throw new Error('Invalid user');
             }
 
@@ -32,7 +36,7 @@ class Project {
             throw err;
         }
     }
-    getProjects = async () => {
+    getProjects = async (token) => {
         try {
             const projects = await this.projectRepository.getRows();
             return projects;
@@ -43,6 +47,7 @@ class Project {
     }
 
     updateProject = async ({
+        token,
         id,
         name,
         description,
@@ -50,9 +55,12 @@ class Project {
 
     }) => {
         try {
+
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             if (userId) {
                 const user = await this.userService.getUserById({ id: userId });
-                if (!user || (user.tag != 'COOR' && user.tag != 'PROF')) {
+                if (!user || (user.profileTag != 'COOR' && user.profileTag != 'PROF')) {
                     throw new Error('Invalid user');
                 }
             }
@@ -71,8 +79,12 @@ class Project {
     }
 
     deleteProject = async ({
+        token,
         id
     }) => {
+
+        if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+
         try {
             const deletedProject = await this.projectRepository.deleteRow({id});
             return deletedProject;
@@ -82,9 +94,13 @@ class Project {
     }
 
     getProjectById = async ({
+        token,
         id
     }) => {
         try {
+
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            
             const selectedProject = await this.projectRepository.getRow({id});
             return selectedProject;
         } catch (err) {

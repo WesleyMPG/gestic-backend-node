@@ -48,9 +48,9 @@ app.post('/login', async (req, res, next) => {
     }
 })
 
-app.put('/approve-user/:id', async (req, res) => {
+app.put('/approve-user/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await userService.approveUserById(req.params);
+        const result = await userService.approveUserById({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -58,9 +58,9 @@ app.put('/approve-user/:id', async (req, res) => {
     }
 })
 
-app.put('/approve-user', async (req,res) => {
+app.put('/approve-user', verifyJWT, async (req,res) => {
     try {
-        const result = await userService.approveMultipleUsersById(req.body);
+        const result = await userService.approveMultipleUsersById({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -68,9 +68,9 @@ app.put('/approve-user', async (req,res) => {
     }
 })
 
-app.put('/user', async (req,res) => {
+app.put('/user', verifyJWT, async (req,res) => {
     try {
-        const result = await userService.updateUser(req.body);
+        const result = await userService.updateUser({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -78,9 +78,9 @@ app.put('/user', async (req,res) => {
     }
 })
 
-app.get('/user', async (req,res) => {
+app.get('/user', verifyJWT, async (req,res) => {
     try {
-        const result = await userService.getListOfUsersByStatus();
+        const result = await userService.getListOfUsersByStatus(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -99,10 +99,10 @@ app.post('/register', async (req, res) => {
     }
 })
 
-app.post('/file', upload.single('file'), async (req, res) => {
+app.post('/file', verifyJWT, upload.single('file'), async (req, res) => {
     const { file } = req;
     try {
-        const result = await fileService.insertFile({ ...req.body, ref: req.file.filename });
+        const result = await fileService.insertFile({ ...req.body, ref: req.file.filename, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -110,14 +110,14 @@ app.post('/file', upload.single('file'), async (req, res) => {
     }
 })
 
-app.get('/download-file', function (req, res) {
+app.get('/download-file', verifyJWT, function (req, res) {
     const file = `${multerConfig.uploadsPath}/${req.body.ref}`;
     res.status(200).download(file);
 });
 
-app.get('/file', async (req, res) => {
+app.get('/file', verifyJWT, async (req, res) => {
     try {
-        const result = await fileService.getFiles(req.body);
+        const result = await fileService.getFiles({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -125,9 +125,9 @@ app.get('/file', async (req, res) => {
     }
 })
 
-app.post('/project', async (req, res) => {
+app.post('/project', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.insertProject(req.body);
+        const result = await projectService.insertProject({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -135,9 +135,9 @@ app.post('/project', async (req, res) => {
     }
 })
 
-app.get('/project', async (req, res) => {
+app.get('/project', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.getProjects();
+        const result = await projectService.getProjects(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -145,9 +145,9 @@ app.get('/project', async (req, res) => {
     }
 })
 
-app.put('/project', async (req, res) => {
+app.put('/project', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.updateProject(req.body);
+        const result = await projectService.updateProject({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -155,9 +155,9 @@ app.put('/project', async (req, res) => {
     }
 })
 
-app.delete('/project/:id', async (req, res) => {
+app.delete('/project/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.deleteProject(req.params);
+        const result = await projectService.deleteProject({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -165,9 +165,9 @@ app.delete('/project/:id', async (req, res) => {
     }
 })
 
-app.get('/project/:id', async (req, res) => {
+app.get('/project/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.getProjectById(req.params);
+        const result = await projectService.getProjectById({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -175,9 +175,9 @@ app.get('/project/:id', async (req, res) => {
     }
 })
 
-app.post('/class-group', async(req, res) => {
+app.post('/class-group', verifyJWT, async(req, res) => {
     try {
-        const result = await classGroupService.insertClassGroup(req.body);
+        const result = await classGroupService.insertClassGroup({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -185,9 +185,9 @@ app.post('/class-group', async(req, res) => {
     }
 })
 
-app.get('/class-group', async(req, res) => {
+app.get('/class-group', verifyJWT, async(req, res) => {
     try {
-        const result = await classGroupService.getClassGroups();
+        const result = await classGroupService.getClassGroups(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -195,9 +195,9 @@ app.get('/class-group', async(req, res) => {
     }
 })
 
-app.put('/class-group', async(req,res) => {
+app.put('/class-group', verifyJWT, async(req,res) => {
     try {
-        const result = await classGroupService.updateClassGroup(req.body);
+        const result = await classGroupService.updateClassGroup({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -205,9 +205,9 @@ app.put('/class-group', async(req,res) => {
     }
 })
 
-app.delete('/class-group', async(req,res) => {
+app.delete('/class-group', verifyJWT, async(req,res) => {
     try {
-        const result = await classGroupService.deleteClassGroups();
+        const result = await classGroupService.deleteClassGroups(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -215,9 +215,9 @@ app.delete('/class-group', async(req,res) => {
     }
 })
 
-app.get('/class-group/:id', async(req, res) => {
+app.get('/class-group/:id', verifyJWT, async(req, res) => {
     try {
-        const result = await classGroupService.getClassGroupById(req.params);
+        const result = await classGroupService.getClassGroupById({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -225,9 +225,9 @@ app.get('/class-group/:id', async(req, res) => {
     }
 })
 
-app.delete('/class-group/:id', async(req,res) => {
+app.delete('/class-group/:id', verifyJWT, async(req,res) => {
     try {
-        const result = await classGroupService.deleteClassGroupById(req.params);
+        const result = await classGroupService.deleteClassGroupById({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -236,7 +236,7 @@ app.delete('/class-group/:id', async(req,res) => {
 })
 
 
-app.post('/logout', (req, res) => {
+app.post('/logout', verifyJWT, (req, res) => {
     res.json({ auth: false, token: null });
 })
 

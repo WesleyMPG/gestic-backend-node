@@ -38,7 +38,7 @@ paths:
               type: "string"
       responses:
         "200":
-          description: "Successful login"
+          description: "Successful login. profileTag can be ALUN or MONI or COOR or PROF."
           schema:
             type: "object"
             properties:
@@ -62,6 +62,8 @@ paths:
                 type: "boolean"
               token:
                 type: "string"
+              profileTag:
+                type: "string"
         "500":
           description: "Unsuccessful login"
           schema:
@@ -74,7 +76,7 @@ paths:
       tags:
       - "User"
       summary: "Register a new user"
-      description: "Tag can be: ALUN or PROF or COOR"
+      description: "Tag can be: ALUN or MONI or PROF or COOR"
       consumes:
       - "application/json"
       produces:
@@ -120,6 +122,8 @@ paths:
                 type: "string"
               status:
                 type: "boolean"  
+              profileTag:
+                type: "string"
         "500":
           description: "Unsuccessful registration"
           schema:

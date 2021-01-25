@@ -25,6 +25,20 @@ class User {
         return await bcrypt.compare(password, passHash)
     }
 
+    validateUserProfile = async ({ token, validProfileTags = [] }) => {
+        try {
+            const { id, profileId } = await jwt.verify(token, process.env.SECRET);
+            const profile = await this.profileRepository.getRow({ id: profileId });
+
+            if (validProfileTags.find((prof) => prof === profile.tag)) return true;
+
+            return false;
+
+        } catch (err) {
+            throw err
+        }
+    }
+
     login = async ({
         email,
         password
@@ -39,7 +53,8 @@ class User {
                 const token = jwt.sign({ id, profileId }, process.env.SECRET, {
                     expiresIn: 900
                 });
-                return { ...user, auth: true, token: token, password: '*******' };
+                const profile = await this.profileRepository.getRow({ id: user.profileId });
+                return { ...user, profileTag: profile.tag, auth: true, token: token, password: '*******' };
             } else {
                 throw new Error('Invalid Login!');
             }
@@ -68,7 +83,8 @@ class User {
                 cpf,
                 email,
                 password,
-                status: false
+                status: false,
+                profileTag: tag
             });
 
             return {
@@ -81,19 +97,25 @@ class User {
     }
 
     getUserById = async ({
+        token,
         id
     }) => {
         try {
             const user = await this.userRepository.getRow({ id });
             const profile = await this.profileRepository.getRow({ id: user.profileId });
-            return { ...user, tag: profile.tag, password: '*******' };
+            return { ...user, profileTag: profile.tag, password: '*******' };
         } catch (err) {
             throw err;
         }
     }
 
-    getListOfUsersByStatus = async () => {
+    getListOfUsersByStatus = async (
+        token
+    ) => {
         try {
+
+            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             const users = await this.userRepository.getRows({ status: false });
             return users.map(user => ({ ...user, password: '*******' }));
         } catch (err) {
@@ -102,6 +124,7 @@ class User {
     }
 
     updateUser = async ({
+        token,
         id,
         name,
     }) => {
@@ -109,29 +132,37 @@ class User {
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
             const updatedUser = await this.userRepository.updateRow({ id }, { name });
-            return {...updatedUser, password: '*******'};
+            return { ...updatedUser, password: '*******' };
         } catch (err) {
             throw err;
         }
     }
 
     approveUserById = async ({
+        token,
         id
     }) => {
         try {
+
+            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
             const approvedUser = await this.userRepository.updateRow({ id }, { status: true });
-            return {...approvedUser, password: '*******'};
+            return { ...approvedUser, password: '*******' };
         } catch (err) {
             throw err;
         }
     }
 
     approveMultipleUsersById = async ({
+        token,
         ids
     }) => {
         try {
+
+            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+
             let users = [];
             let tempUser;
             for (const id of ids) {
