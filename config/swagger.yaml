@@ -132,44 +132,6 @@ paths:
               message:
                 type: "string"
   /user:
-    get:
-      tags:
-      - "User"
-      summary: "Get users with status: false"
-      produces:
-      - "application/json"
-      responses:
-        "200":
-          description: "Returned the list of users with status: false"
-          schema:
-            type: "array"
-            items:
-              type: "object"
-              properties:
-                id:
-                  type: "string"
-                  format: "uuid"
-                profileId:
-                  type: "string"
-                  format: "uuid"
-                name:
-                  type: "string"
-                cpf:
-                  type: "string"
-                email:
-                  type: "string"
-                password:
-                  type: "string"
-                status:
-                  type: "boolean"
-                  example: false  
-        "500":
-          description: "Could not return a list of user with status: false"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"
     put:
       tags:
       - "User"
@@ -215,6 +177,50 @@ paths:
                 type: "boolean"  
         "500":
           description: "Unsuccessful update"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"                            
+  /user/:status?:
+    get:
+      tags:
+      - "User"
+      summary: "Get users with optional status parameter"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: status
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: "Returned the list of users with optional status filter"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                profileId:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                cpf:
+                  type: "string"
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+                status:
+                  type: "boolean"
+                  example: false  
+        "500":
+          description: "Could not return a list of users with optional status filter"
           schema:
             type: "object"
             properties:

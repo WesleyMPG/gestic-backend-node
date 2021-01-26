@@ -97,10 +97,7 @@ class Project {
         token,
         id
     }) => {
-        try {
-
-            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
-            
+        try {            
             const selectedProject = await this.projectRepository.getRow({id});
             return selectedProject;
         } catch (err) {

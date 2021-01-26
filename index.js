@@ -78,9 +78,9 @@ app.put('/user', verifyJWT, async (req,res) => {
     }
 })
 
-app.get('/user', verifyJWT, async (req,res) => {
+app.get('/user/:status?', verifyJWT, async (req,res) => {
     try {
-        const result = await userService.getListOfUsersByStatus(req.headers['x-access-token']);
+        const result = await userService.getListOfUsers({...req.params, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

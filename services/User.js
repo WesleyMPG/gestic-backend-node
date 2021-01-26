@@ -109,14 +109,22 @@ class User {
         }
     }
 
-    getListOfUsersByStatus = async (
-        token
-    ) => {
+    getListOfUsers = async ({
+        token,
+        status = undefined,
+    }) => {
         try {
 
             if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
-
-            const users = await this.userRepository.getRows({ status: false });
+            let users;
+            if(status === undefined)
+            {
+                users = await this.userRepository.getRows(); 
+            }
+            else
+            {
+                users = await this.userRepository.getRows({ status });
+            }
             return users.map(user => ({ ...user, password: '*******' }));
         } catch (err) {
             throw err;
@@ -167,7 +175,7 @@ class User {
             let tempUser;
             for (const id of ids) {
                 try {
-                    tempUser = await this.approveUserById({ id });
+                    tempUser = await this.approveUserById({ id,token });
                     users.push(tempUser);
                 } catch (err) { }
             }

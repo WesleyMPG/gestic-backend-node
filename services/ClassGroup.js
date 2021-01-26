@@ -50,7 +50,8 @@ class ClassGroup {
     }
 
     getClassGroupById = async ({
-        id
+        id,
+        token
     }) => {
         try {
             const classGroup = await this.classGroupRepository.getRow({ id });
