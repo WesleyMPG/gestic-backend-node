@@ -6,7 +6,7 @@ const UserService = require('./User');
 class ClassGroup {
     constructor() {
         this.classGroupRepository = new ClassGroupRepository();
-        this.usersService = new UserService();
+        this.userService = new UserService();
     }
 
     insertClassGroup = async ({
@@ -21,7 +21,7 @@ class ClassGroup {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const insertedClassGroup = await this.classGroupRepository.insertRow({
                 name,
@@ -74,7 +74,7 @@ class ClassGroup {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const classGroup = await this.getClassGroupById({ id });
             if (!classGroup) {
@@ -104,7 +104,7 @@ class ClassGroup {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const deletedClassGroup = await this.classGroupRepository.deleteRow({ id });
             return deletedClassGroup;
@@ -118,7 +118,7 @@ class ClassGroup {
     ) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const deletedClassGroups = await this.classGroupRepository.deleteRows({});
             return deletedClassGroups;

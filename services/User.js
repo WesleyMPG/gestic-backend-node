@@ -83,13 +83,13 @@ class User {
                 cpf,
                 email,
                 password,
-                status: false,
-                profileTag: tag
+                status: false
             });
 
             return {
                 ...createdUser,
-                password: '*******'
+                password: '*******',
+                profileTag: tag
             };
         } catch (err) {
             throw err;
@@ -114,7 +114,7 @@ class User {
     ) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const users = await this.userRepository.getRows({ status: false });
             return users.map(user => ({ ...user, password: '*******' }));
@@ -144,7 +144,7 @@ class User {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
@@ -161,7 +161,7 @@ class User {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             let users = [];
             let tempUser;

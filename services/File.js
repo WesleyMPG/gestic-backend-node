@@ -1,10 +1,13 @@
 require('dotenv/config');
 
+
 const FileRepository = require('../repository/File');
+const UserService = require('./User');
 
 class File {
     constructor() {
         this.fileRepository = new FileRepository();
+        this.userService = new UserService();
     }
 
     insertFile = async ({
@@ -15,7 +18,7 @@ class File {
     }) => {
         try {
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const insertedFile = await this.fileRepository.insertRow({
                 name,
@@ -35,7 +38,7 @@ class File {
     }) => {
         try{
 
-            if (!(await this.usersService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
             
             const files = await this.fileRepository.getRows({tag});
             return files;
