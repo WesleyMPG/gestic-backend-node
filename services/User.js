@@ -75,6 +75,12 @@ class User {
 
             if (!profile) throw new Error('Invalid tag.');
 
+            let user;
+            user = await this.userRepository.getRow({ email });
+            if (user) throw new Error('Invalid email.')
+            user = await this.userRepository.getRow({ cpf });
+            if (user) throw new Error('Invalid CPF.')
+
             password = await this._generateHash({ password });
 
             const createdUser = await this.userRepository.insertRow({
@@ -115,14 +121,12 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
             let users;
-            if(status === undefined)
-            {
-                users = await this.userRepository.getRows(); 
+            if (status === undefined) {
+                users = await this.userRepository.getRows();
             }
-            else
-            {
+            else {
                 users = await this.userRepository.getRows({ status });
             }
             return users.map(user => ({ ...user, password: '*******' }));
@@ -152,7 +156,7 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
@@ -169,17 +173,34 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             let users = [];
             let tempUser;
             for (const id of ids) {
                 try {
-                    tempUser = await this.approveUserById({ id,token });
+                    tempUser = await this.approveUserById({ id, token });
                     users.push(tempUser);
                 } catch (err) { }
             }
             return users;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    deleteUserById = async ({
+        token,
+        id
+    }) => {
+        try {
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            const user = await this.userRepository.getRow({ id });
+            if (!user) throw new Error('Invalid Id.')
+
+            const deletedUser = await this.userRepository.deleteRow({ id });
+
+            return { ...deletedUser, password: '*******' }
         } catch (err) {
             throw err;
         }

@@ -44,47 +44,9 @@ app.post('/login', async (req, res, next) => {
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
-    }
-})
-
-app.put('/approve-user/:id', verifyJWT, async (req, res) => {
-    try {
-        const result = await userService.approveUserById({...req.params, token: req.headers['x-access-token']});
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({message: err.message});
-    }
-})
-
-app.put('/approve-user', verifyJWT, async (req,res) => {
-    try {
-        const result = await userService.approveMultipleUsersById({...req.body, token: req.headers['x-access-token']});
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({message: err.message});
-    }
-})
-
-app.put('/user', verifyJWT, async (req,res) => {
-    try {
-        const result = await userService.updateUser({...req.body, token: req.headers['x-access-token']});
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({message: err.message});
-    }
-})
-
-app.get('/user/:status?', verifyJWT, async (req,res) => {
-    try {
-        const result = await userService.getListOfUsers({...req.params, token: req.headers['x-access-token']});
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
@@ -95,7 +57,69 @@ app.post('/register', async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+app.put('/user', verifyJWT, async (req, res) => {
+    try {
+        const result = await userService.updateUser({ ...req.body, token: req.headers['x-access-token'] });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+app.put('/user/:id', verifyJWT, async (req, res) => {
+    try {
+        const result = await userService.deleteUserById({ ...req.params, token: req.headers['x-access-token'] });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+app.get('/user/:status?', verifyJWT, async (req, res) => {
+    try {
+        const result = await userService.getListOfUsers({ ...req.params, token: req.headers['x-access-token'] });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+app.put('/approve-user/:id', verifyJWT, async (req, res) => {
+    try {
+        const result = await userService.approveUserById({ ...req.params, token: req.headers['x-access-token'] });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+app.put('/approve-user', verifyJWT, async (req, res) => {
+    try {
+        const result = await userService.approveMultipleUsersById({ ...req.body, token: req.headers['x-access-token'] });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
@@ -106,7 +130,9 @@ app.post('/file', verifyJWT, upload.single('file'), async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
@@ -117,21 +143,25 @@ app.get('/download-file', verifyJWT, function (req, res) {
 
 app.get('/file', verifyJWT, async (req, res) => {
     try {
-        const result = await fileService.getFiles({...req.body, token: req.headers['x-access-token']});
+        const result = await fileService.getFiles({ ...req.body, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
 app.post('/project', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.insertProject({...req.body, token: req.headers['x-access-token']});
+        const result = await projectService.insertProject({ ...req.body, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
@@ -141,97 +171,117 @@ app.get('/project', verifyJWT, async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
 app.put('/project', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.updateProject({...req.body, token: req.headers['x-access-token']});
+        const result = await projectService.updateProject({ ...req.body, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
 app.delete('/project/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.deleteProject({...req.params, token: req.headers['x-access-token']});
+        const result = await projectService.deleteProject({ ...req.params, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
 app.get('/project/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.getProjectById({...req.params, token: req.headers['x-access-token']});
+        const result = await projectService.getProjectById({ ...req.params, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message });
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.post('/class-group', verifyJWT, async(req, res) => {
+app.post('/class-group', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.insertClassGroup({...req.body, token: req.headers['x-access-token']});
+        const result = await classGroupService.insertClassGroup({ ...req.body, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.get('/class-group', verifyJWT, async(req, res) => {
+app.get('/class-group', verifyJWT, async (req, res) => {
     try {
         const result = await classGroupService.getClassGroups(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.put('/class-group', verifyJWT, async(req,res) => {
+app.put('/class-group', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.updateClassGroup({...req.body, token: req.headers['x-access-token']});
+        const result = await classGroupService.updateClassGroup({ ...req.body, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.delete('/class-group', verifyJWT, async(req,res) => {
+app.delete('/class-group', verifyJWT, async (req, res) => {
     try {
         const result = await classGroupService.deleteClassGroups(req.headers['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.get('/class-group/:id', verifyJWT, async(req, res) => {
+app.get('/class-group/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.getClassGroupById({...req.params, token: req.headers['x-access-token']});
+        const result = await classGroupService.getClassGroupById({ ...req.params, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
-app.delete('/class-group/:id', verifyJWT, async(req,res) => {
+app.delete('/class-group/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.deleteClassGroupById({...req.params, token: req.headers['x-access-token']});
+        const result = await classGroupService.deleteClassGroupById({ ...req.params, token: req.headers['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.message});
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
     }
 })
 
@@ -242,18 +292,18 @@ app.post('/logout', verifyJWT, (req, res) => {
 
 
 app.get('/test', async (req, res) => {
-    const {password} = req.body
+    const { password } = req.body
 
 
     const salt = await bcrypt.genSalt()
     const passHash = await bcrypt.hash(password, salt);
-    
-    if (await bcrypt.compare(password, passHash)) {        
-        res.status(200).json({pass:password,hash:passHash});
+
+    if (await bcrypt.compare(password, passHash)) {
+        res.status(200).json({ pass: password, hash: passHash });
     } else {
         res.status(500).json({ message: "Erro" });
     }
-    
+
 
 })
 
