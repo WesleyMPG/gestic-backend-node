@@ -181,7 +181,49 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"                            
+                type: "string"   
+  /user/:id:
+    delete:
+      tags:
+      - "User"
+      summary: "Delete user"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "param"
+          name: "id"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successful delete"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              profileId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              cpf:
+                type: "string"
+              email:
+                type: "string"
+              password:
+                type: "string"
+              status:
+                type: "boolean"  
+        "500":
+          description: "Unsuccessful delete"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"                         
   /user/:status?:
     get:
       tags:
@@ -276,7 +318,7 @@ paths:
             properties:
               message:
                 type: "string"
-  /approve-user/{id}:
+  /approve-user/:id:
     put:
       tags:
       - "User"
@@ -564,7 +606,7 @@ paths:
             properties:
               message:
                 type: "string"  
-  /project/{id}:
+  /project/:id:
     get:
       tags:
         - "Project"
@@ -835,7 +877,7 @@ paths:
             properties:
               message:
                 type: "string"                
-  /class-group/{id}:
+  /class-group/:id:
     get:
       tags:
         - "Class Group"
