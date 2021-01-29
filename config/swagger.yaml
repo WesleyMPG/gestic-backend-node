@@ -125,6 +125,7 @@ paths:
                 type: "boolean"  
               profileTag:
                 type: "string"
+                example: "ALUN"
         "500":
           description: "Unsuccessful registration"
           schema:
