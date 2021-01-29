@@ -64,6 +64,7 @@ class User {
     }
 
     register = async ({
+        token,
         tag,
         name,
         cpf,
@@ -71,6 +72,9 @@ class User {
         password
     }) => {
         try {
+
+            if (token && !(await this.validateUserProfile({ token, validProfileTags: ['COOR'] }))) throw new Error('Invalid Profile.');
+
             const profile = await this.profileRepository.getRow({ tag });
 
             if (!profile) throw new Error('Invalid tag.');
@@ -89,7 +93,7 @@ class User {
                 cpf,
                 email,
                 password,
-                status: false
+                status: (token)?true:false
             });
 
             return {

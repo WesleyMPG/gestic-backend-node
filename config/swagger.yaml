@@ -76,7 +76,7 @@ paths:
       tags:
       - "User"
       summary: "Register a new user"
-      description: "Tag can be: ALUN or MONI or PROF or COOR"
+      description: "Tag can be: ALUN or MONI or PROF or COOR. Requires the COOR token if registration is done by COORDENADOR. If a valid COOR token is given, the user is registered with status true."
       consumes:
       - "application/json"
       produces:
@@ -100,6 +100,7 @@ paths:
             tag:
               type: "string"
               example: "ALUN"
+            
       responses:
         "200":
           description: "Successful registration"

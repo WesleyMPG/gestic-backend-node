@@ -53,7 +53,7 @@ app.post('/login', async (req, res, next) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const result = await userService.register(req.body);
+        const result = await userService.register({...req.body, token: req.headers['x-access-token']});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
