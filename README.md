@@ -19,4 +19,4 @@ npm start
 ```
 
 ### API documentation
-To see the documentation of the API go to [/api-docs](http://localhost:3333/api-docs/) endpoint once the server is up.
+To see the documentation of the API go to [/api-docs](https://api.gestic.mateusbmp.com.br/api-docs/) endpoint once the server is up.
