@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS class_group;
+DROP TABLE IF EXISTS class_group CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
