@@ -46,6 +46,18 @@ class Project {
         }
     }
 
+    getProjectById = async ({
+        token,
+        id
+    }) => {
+        try {
+            const selectedProject = await this.projectRepository.getRow({id});
+            return selectedProject;
+        } catch (err) {
+            throw err;
+        }
+    }
+
     updateProject = async ({
         token,
         id,
@@ -93,18 +105,7 @@ class Project {
         }
     }
 
-    getProjectById = async ({
-        token,
-        id
-    }) => {
-        try {            
-            const selectedProject = await this.projectRepository.getRow({id});
-            return selectedProject;
-        } catch (err) {
-            throw err;
-        }
-    }
-
 }
+
 
 module.exports = Project;

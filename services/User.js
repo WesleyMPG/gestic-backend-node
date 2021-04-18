@@ -46,15 +46,16 @@ class User {
         try {
             const user = await this.userRepository.getRow({
                 email
-            })
+            });
 
             if (user && await this._validatePassword({ password, passHash: user.password }) && user.status) {
                 const { id, profileId } = user;
-                const token = jwt.sign({ id, profileId }, process.env.SECRET, {
-                    expiresIn: 900
-                });
                 const profile = await this.profileRepository.getRow({ id: user.profileId });
-                return { ...user, profileTag: profile.tag, auth: true, token: token, password: '*******' };
+                const token = jwt.sign({ id, profileId }, process.env.SECRET, {
+                    expiresIn: 900  // seconds
+                });
+                const result = { ...user, profileTag: profile.tag, auth: true, password: '*******' };
+                return { result, token };
             } else {
                 throw new Error('Invalid Login!');
             }
@@ -73,7 +74,7 @@ class User {
     }) => {
         try {
 
-            if (token && !(await this.validateUserProfile({ token, validProfileTags: ['COOR'] }))) throw new Error('Invalid Profile.');
+            if (token && !(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'TEC'] }))) throw new Error('Invalid Profile.');
 
             const profile = await this.profileRepository.getRow({ tag });
 
@@ -160,7 +161,7 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC', 'COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
@@ -177,7 +178,7 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC', 'COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
 
             let users = [];
             let tempUser;
@@ -198,7 +199,7 @@ class User {
         id
     }) => {
         try {
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC','COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('Invalid Id.')
 

@@ -4,6 +4,12 @@ info:
   version: "1.0.0"
   title: "GestIC API"
 host: "localhost:3333"
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: x-access-token
 tags:
 - name: "User"
   description: "Operations related to users"
@@ -14,7 +20,7 @@ tags:
 - name: "Class Group"
   description: "Operations related to class groups"
 paths:
-  /login:
+  /access/login:
     post:
       tags:
       - "User"
@@ -39,6 +45,14 @@ paths:
       responses:
         "200":
           description: "Successful login. profileTag can be ALUN or MONI or COOR or PROF."
+          headers:
+            Set-Cookie:
+              schema:
+                type: "string"
+                example: 	"x-access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA4OTI5NzE4LTU0ZGEtNDVmNy04YTVjLTQ2ZTg
+                1ZTFjNzc2YyIsInByb2ZpbGVJZCI6IjIxZjMzOTJkLWZiZGMtNGNiMC04ZTNjLTVhMTFkNmMwNjlmMSIsImlhdCI6MTYxOTA1ODc3NSwiZXhw
+                IjoxNjE5MDU5Njc1fQ.OpZp7wcmzolDnIZ12N2FVOQgrIhui6G0Ok6IEitRcUw;
+                Expires=Thu, 22 Apr 2021 02:47:55 GMT; Max-Age=900; Path=/; HttpOnly; Domain=localhos"
           schema:
             type: "object"
             properties:
@@ -57,11 +71,9 @@ paths:
               password:
                 type: "string"
               status:
-                type: "boolean"  
+                type: "boolean"
               auth:
                 type: "boolean"
-              token:
-                type: "string"
               profileTag:
                 type: "string"
         "500":
@@ -71,12 +83,12 @@ paths:
             properties:
               message:
                 type: "string"
-  /register:
+  /access/register:
     post:
       tags:
       - "User"
       summary: "Register a new user"
-      description: "Tag can be: ALUN or MONI or PROF or COOR. Requires the COOR token if registration is done by COORDENADOR. If a valid COOR token is given, the user is registered with status true."
+      description: "Tag can be: ALUN or MONI or PROF or COOR or TEC. Requires the COOR or TEC token for registration to be done."
       consumes:
       - "application/json"
       produces:
@@ -100,7 +112,6 @@ paths:
             tag:
               type: "string"
               example: "ALUN"
-            
       responses:
         "200":
           description: "Successful registration"
@@ -133,6 +144,23 @@ paths:
             properties:
               message:
                 type: "string"
+
+  /access/logout:
+    post:
+      tags:
+      - "User"
+      summary: "It does logout"
+      description: ""
+      produces: "application/json"
+      responses:
+        "200":
+          description: "sucessful logout"
+          schema:
+            type: "object"
+            properties:
+              auth:
+                type: "boolean"
+                example: "false"
   /user:
     put:
       tags:
@@ -269,8 +297,8 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"              
-  /approve-user:
+                type: "string"
+  /user/approve:
     put:
       tags:
       - "User"
@@ -320,7 +348,7 @@ paths:
             properties:
               message:
                 type: "string"
-  /approve-user/:id:
+  /user/approve/:id:
     put:
       tags:
       - "User"
@@ -450,9 +478,9 @@ paths:
             properties:
               message:
                 type: "string"
-  /download-file:
+  /file/download:
     get:
-      tags: 
+      tags:
       - "File"
       summary: "Download a file"
       produces:
@@ -481,7 +509,7 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
   /project:
     get:
       tags:
