@@ -1,4 +1,4 @@
-const { ProjectService } = require('../services')
+const { ProjectService } = require('../services');
 const projectService = new ProjectService();
 const verifyJWT = require('../config/configJWT');
 const express = require('express');

@@ -26,6 +26,7 @@ app.use('/user', routes.user);
 app.use('/file', routes.file);
 app.use('/project', routes.project);
 app.use('/class-group', routes.classGroup);
+app.use('/informative', routes.informative);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get('/', verifyJWT, (req, res) => {
