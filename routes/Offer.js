@@ -1,5 +1,5 @@
-const { ClassGroupService } = require('../services')
-const classGroupService = new ClassGroupService();
+const { OfferService } = require('../services')
+const offerService = new OfferService();
 const verifyJWT = require('../config/configJWT');
 const express = require('express');
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.insertClassGroup({ ...req.body, token: req.cookies['x-access-token'] });
+        const result = await offerService.insertOffer({ ...req.body, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -17,9 +17,9 @@ router.post('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/', verifyJWT, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const result = await classGroupService.getClassGroups(req.cookies['x-access-token']);
+        const result = await offerService.getOffers();
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -31,7 +31,7 @@ router.get('/', verifyJWT, async (req, res) => {
 
 router.put('/', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.updateClassGroup({ ...req.body, token: req.cookies['x-access-token'] });
+        const result = await offerService.updateOffer({ ...req.body, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -43,7 +43,7 @@ router.put('/', verifyJWT, async (req, res) => {
 
 router.delete('/', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.deleteClassGroups(req.cookies['x-access-token']);
+        const result = await offerService.deleteOffers(req.cookies['x-access-token']);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -53,9 +53,9 @@ router.delete('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/:id', verifyJWT, async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const result = await classGroupService.getClassGroupById({ ...req.params, token: req.cookies['x-access-token'] });
+        const result = await offerService.getOfferById({ ...req.params });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -67,7 +67,7 @@ router.get('/:id', verifyJWT, async (req, res) => {
 
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await classGroupService.deleteClassGroupById({ ...req.params, token: req.cookies['x-access-token'] });
+        const result = await offerService.deleteOfferById({ ...req.params, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

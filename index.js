@@ -25,7 +25,7 @@ app.use('/access', routes.access);
 app.use('/user', routes.user);
 app.use('/file', routes.file);
 app.use('/project', routes.project);
-app.use('/class-group', routes.classGroup);
+app.use('/offer', routes.offer);
 app.use('/informative', routes.informative);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
@@ -34,7 +34,7 @@ app.get('/', verifyJWT, (req, res) => {
 });
 
 const server = app.listen(process.env.PORT, function () {
-    console.log(`Servidor ativo na porta ${process.env.PORT || proces.env.PORT}`);
+    console.log(`Servidor ativo na porta ${process.env.DB_PORT || process.env.PORT}`);
 });
 
 process.on('SIGINT', () => {

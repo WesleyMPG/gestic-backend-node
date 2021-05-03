@@ -19,9 +19,9 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.post('/register', verifyJWT, async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
-        const result = await userService.register({...req.body, token: req.cookies['x-access-token']});
+        const result = await userService.register({...req.body});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

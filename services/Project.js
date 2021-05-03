@@ -18,7 +18,8 @@ class Project {
     }) => {
         try {
 
-            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: ['COOR', 'PROF', 'MONI'] });
 
             const user = await this.userService.getUserById({ id: userId });
             if (!user || (user.profileTag != 'COOR' && user.profileTag != 'PROF')) {
@@ -36,7 +37,7 @@ class Project {
             throw err;
         }
     }
-    getProjects = async (token) => {
+    getProjects = async () => {
         try {
             const projects = await this.projectRepository.getRows();
             return projects;
@@ -47,7 +48,6 @@ class Project {
     }
 
     getProjectById = async ({
-        token,
         id
     }) => {
         try {

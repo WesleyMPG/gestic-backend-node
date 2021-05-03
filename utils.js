@@ -59,16 +59,14 @@ console.log("unparse (db -> back)")
 unparse(bodyDB)
 */
 const bcrypt = require('bcrypt')
-password="123456"
+password="1234"
 
-const hashPasswordAsync = async password => {
+const hashPassword = async password => {
 	const salt = await bcrypt.genSalt()
 	const hash = await bcrypt.hash(password, salt)
-    
-    return hash
+
+	console.log(hash);
 }
 
-passHash = await hashPasswordAsync(password);
-console.log(passHash)
-
+hashPassword(password);
 

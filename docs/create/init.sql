@@ -1,8 +1,9 @@
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS class_group CASCADE;
+DROP TABLE IF EXISTS offer CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS project CASCADE;
 DROP TABLE IF EXISTS file CASCADE;
+DROP TABLE IF EXISTS informatives CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -18,7 +19,6 @@ CREATE TABLE users (
   user_id UUID DEFAULT uuid_generate_v4 (),
   prof_id UUID NOT NULL,
   user_name VARCHAR(200) NOT NULL,
-  user_cpf VARCHAR(15) NOT NULL UNIQUE,
   user_email VARCHAR(200) NOT NULL UNIQUE,
   user_password VARCHAR(200) NOT NULL,
   user_status BOOLEAN NOT NULL,
@@ -27,16 +27,16 @@ CREATE TABLE users (
 );
 
 
-CREATE TABLE class_group (
-  group_id UUID DEFAULT uuid_generate_v4 (),
-  group_name VARCHAR(200) NOT NULL,
-  group_code VARCHAR(200) NOT NULL UNIQUE,
-  group_code_classroom VARCHAR(200),
-  group_link_classroom VARCHAR (200),
-  group_link_meets VARCHAR (200),
-  group_link_wpp VARCHAR (200),
-  group_link_tel VARCHAR (200),
-  CONSTRAINT pk_group PRIMARY KEY (group_id)
+CREATE TABLE offer (
+  offer_id UUID DEFAULT uuid_generate_v4 (),
+  offer_name VARCHAR(200) NOT NULL,
+  offer_code VARCHAR(200) NOT NULL UNIQUE,
+  offer_code_classroom VARCHAR(200),
+  offer_link_classroom VARCHAR (200),
+  offer_link_meets VARCHAR (200),
+  offer_link_wpp VARCHAR (200),
+  offer_link_tel VARCHAR (200),
+  CONSTRAINT pk_offer PRIMARY KEY (offer_id)
 );
 
 
@@ -59,3 +59,9 @@ CREATE TABLE file (
 );
 
 
+CREATE TABLE informatives (
+  info_id UUID DEFAULT uuid_generate_v4(),
+  info_title VARCHAR(100) NOT NULL,
+  info_content VARCHAR(1000),
+  CONSTRAINT pk_info PRIMARY KEY (info_id)
+);

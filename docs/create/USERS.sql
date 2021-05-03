@@ -6,7 +6,6 @@ CREATE TABLE users (
   user_id UUID DEFAULT uuid_generate_v4 (),
   prof_id UUID NOT NULL,
   user_name VARCHAR(200) NOT NULL,
-  user_cpf VARCHAR(15) NOT NULL UNIQUE,
   user_email VARCHAR(200) NOT NULL UNIQUE,
   user_password VARCHAR(200) NOT NULL,
   user_status BOOLEAN NOT NULL,

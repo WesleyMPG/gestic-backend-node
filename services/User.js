@@ -39,6 +39,14 @@ class User {
         }
     }
 
+    verifyUserProfile = async ({ token, validProfileTags = [] }) => {
+        if (!(await this.validateUserProfile({
+            token, validProfileTags
+        }))){
+            throw new Error('Invalid user');
+        }
+    }
+
     login = async ({
         email,
         password
@@ -65,36 +73,27 @@ class User {
     }
 
     register = async ({
-        token,
-        tag,
         name,
-        cpf,
         email,
-        password
+        password,
     }) => {
         try {
-
-            if (token && !(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'TEC'] }))) throw new Error('Invalid Profile.');
-
+            const tag = 'ALUN';
             const profile = await this.profileRepository.getRow({ tag });
 
             if (!profile) throw new Error('Invalid tag.');
 
-            let user;
-            user = await this.userRepository.getRow({ email });
+            let user = await this.userRepository.getRow({ email });
             if (user) throw new Error('Invalid email.')
-            user = await this.userRepository.getRow({ cpf });
-            if (user) throw new Error('Invalid CPF.')
 
             password = await this._generateHash({ password });
 
             const createdUser = await this.userRepository.insertRow({
                 profileId: profile.id,
                 name,
-                cpf,
                 email,
                 password,
-                status: (token)?true:false
+                status: true
             });
 
             return {
@@ -144,51 +143,22 @@ class User {
         token,
         id,
         name,
+        status,
+        profileId = undefined,
     }) => {
+        // TODO: modificar todas as funções de update para que
+        // updateRow aceite uma quantidade variavel de campos
         try {
             const user = await this.userRepository.getRow({ id });
             if (!user) throw new Error('User not found.');
+            if (profileId){
+                const profile = this.profileRepository.getRow({profileId});
+                if (!profile) throw new Error('Invalid Profile');
+            } else {
+                profileId = user.profileId
+            }
             const updatedUser = await this.userRepository.updateRow({ id }, { name });
             return { ...updatedUser, password: '*******' };
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    approveUserById = async ({
-        token,
-        id
-    }) => {
-        try {
-
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC', 'COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
-
-            const user = await this.userRepository.getRow({ id });
-            if (!user) throw new Error('User not found.');
-            const approvedUser = await this.userRepository.updateRow({ id }, { status: true });
-            return { ...approvedUser, password: '*******' };
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    approveMultipleUsersById = async ({
-        token,
-        ids
-    }) => {
-        try {
-
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC', 'COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
-
-            let users = [];
-            let tempUser;
-            for (const id of ids) {
-                try {
-                    tempUser = await this.approveUserById({ id, token });
-                    users.push(tempUser);
-                } catch (err) { }
-            }
-            return users;
         } catch (err) {
             throw err;
         }

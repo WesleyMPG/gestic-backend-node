@@ -17,8 +17,8 @@ tags:
   description: "Operations related to file manipulation"
 - name: "Project"
   description: "Operations related to active projects"
-- name: "Class Group"
-  description: "Operations related to class groups"
+- name: "Offer"
+  description: "Operations related to class offers"
 paths:
   /access/login:
     post:
@@ -103,15 +103,10 @@ paths:
           properties:
             name:
               type: "string"
-            cpf:
-              type: "string"
             email:
               type: "string"
             password:
               type: "string"
-            tag:
-              type: "string"
-              example: "ALUN"
       responses:
         "200":
           description: "Successful registration"
@@ -126,14 +121,12 @@ paths:
                 format: "uuid"
               name:
                 type: "string"
-              cpf:
-                type: "string"
               email:
                 type: "string"
               password:
                 type: "string"
               status:
-                type: "boolean"  
+                type: "boolean"
               profileTag:
                 type: "string"
                 example: "ALUN"
@@ -181,8 +174,13 @@ paths:
             id:
               type: "string"
               format: "uuid"
+            profileId:
+                type: "string"
+                format: "uuid"
             name:
               type: "string"
+            status:
+              type: "boolean"
       responses:
         "200":
           description: "Successful update"
@@ -197,21 +195,19 @@ paths:
                 format: "uuid"
               name:
                 type: "string"
-              cpf:
-                type: "string"
               email:
                 type: "string"
               password:
                 type: "string"
               status:
-                type: "boolean"  
+                type: "boolean"
         "500":
           description: "Unsuccessful update"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"   
+                type: "string"
   /user/:id:
     delete:
       tags:
@@ -239,21 +235,19 @@ paths:
                 format: "uuid"
               name:
                 type: "string"
-              cpf:
-                type: "string"
               email:
                 type: "string"
               password:
                 type: "string"
               status:
-                type: "boolean"  
+                type: "boolean"
         "500":
           description: "Unsuccessful delete"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"                         
+                type: "string"
   /user/:status?:
     get:
       tags:
@@ -282,15 +276,13 @@ paths:
                   format: "uuid"
                 name:
                   type: "string"
-                cpf:
-                  type: "string"
                 email:
                   type: "string"
                 password:
                   type: "string"
                 status:
                   type: "boolean"
-                  example: false  
+                  example: false
         "500":
           description: "Could not return a list of users with optional status filter"
           schema:
@@ -298,101 +290,9 @@ paths:
             properties:
               message:
                 type: "string"
-  /user/approve:
-    put:
-      tags:
-      - "User"
-      summary: "Update multiple user status"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Information required for user update"
-        required: true
-        schema:
-          type: "array"
-          items:
-            type: "string"
-            format: "uuid"
-      responses:
-        "200":
-          description: "Successful update"
-          schema:
-            type: "array"
-            items:
-              type: "object"
-              properties:
-                id:
-                  type: "string"
-                  format: "uuid"
-                profileId:
-                  type: "string"
-                  format: "uuid"
-                name:
-                  type: "string"
-                cpf:
-                  type: "string"
-                email:
-                  type: "string"
-                password:
-                  type: "string"
-                status:
-                  type: "boolean"  
-        "500":
-          description: "Unsuccessful update"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"
-  /user/approve/:id:
-    put:
-      tags:
-      - "User"
-      summary: "Update user status"
-      produces:
-      - "application/json"
-      parameters:
-        - in: param
-          name: id
-          required: true
-          type: string
-          format: "uuid"
-      responses:
-        "200":
-          description: "Successful update"
-          schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-                format: "uuid"
-              profileId:
-                type: "string"
-                format: "uuid"
-              name:
-                type: "string"
-              cpf:
-                type: "string"
-              email:
-                type: "string"
-              password:
-                type: "string"
-              status:
-                type: "boolean"  
-        "500":
-          description: "Unsuccessful update"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"                                                            
   /file:
     post:
-      tags: 
+      tags:
       - "File"
       summary: "Upload a file"
       produces:
@@ -542,7 +442,7 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
     post:
       tags:
       - "Project"
@@ -587,7 +487,7 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
     put:
       tags:
       - "Project"
@@ -635,7 +535,7 @@ paths:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
   /project/:id:
     get:
       tags:
@@ -707,16 +607,16 @@ paths:
             properties:
               message:
                 type: "string"
-  /class-group:
+  /offer:
     get:
       tags:
-      - "Class Group"
-      summary: "Get a list of all class groups"
+      - "Class offer"
+      summary: "Get a list of all class offers"
       produces:
       - "application/json"
       responses:
         "200":
-          description: "Obtained a list of all class groups"
+          description: "Obtained a list of all class offers"
           schema:
             type: "array"
             produces: "application/json"
@@ -739,18 +639,18 @@ paths:
                 linkWpp:
                   type: "string"
                 linkTel:
-                  type: "string"                          
+                  type: "string"
         "500":
-          description: "Could not obtain a list of all class groups"
+          description: "Could not obtain a list of all class offers"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
     post:
       tags:
-      - "Class Group"
-      summary: "Insert a class group"
+      - "Class Offer"
+      summary: "Insert a class offer"
       produces:
       - "application/json"
       consumes:
@@ -775,10 +675,10 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"            
+                type: "string"
       responses:
         "200":
-          description: "Inserted a class group"
+          description: "Inserted a class offer"
           schema:
             type: "object"
             properties:
@@ -798,18 +698,18 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"                 
+                type: "string"
         "500":
-          description: "Could not insert a class group"
+          description: "Could not insert a class offer"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"  
+                type: "string"
     put:
       tags:
-      - "Class Group"
-      summary: " Update class group information"
+      - "Class Offer"
+      summary: " Update class offer information"
       produces:
       - "application/json"
       consumes:
@@ -837,10 +737,10 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"            
+                type: "string"
       responses:
         "200":
-          description: "Sucessfully updated a class group"
+          description: "Sucessfully updated a class offer"
           schema:
             type: "object"
             properties:
@@ -860,9 +760,9 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"                 
+                type: "string"
         "500":
-          description: "Could not update a class group"
+          description: "Could not update a class offer"
           schema:
             type: "object"
             properties:
@@ -870,13 +770,13 @@ paths:
                 type: "string"
     delete:
       tags:
-        - "Class Group"
-      summary: "Delete all class groups"
+        - "Class Offer"
+      summary: "Delete all class offers"
       produces:
       - "application/json"
       responses:
         "200":
-          description: "Successfully removed all class groups"
+          description: "Successfully removed all class offers"
           schema:
             type: "array"
             produces: "application/json"
@@ -899,19 +799,19 @@ paths:
                 linkWpp:
                   type: "string"
                 linkTel:
-                  type: "string"     
+                  type: "string"
         "500":
-          description: "Could not remove all class groups"
+          description: "Could not remove all class offers"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"                
-  /class-group/:id:
+                type: "string"
+  /offer/:id:
     get:
       tags:
-        - "Class Group"
-      summary: "Get class group information"
+        - "Class Offer"
+      summary: "Get class offer information"
       produces:
       - "application/json"
       parameters:
@@ -922,7 +822,7 @@ paths:
           format: "uuid"
       responses:
         "200":
-          description: "Obtained a class group"
+          description: "Obtained a class offer"
           schema:
             type: "object"
             properties:
@@ -942,9 +842,9 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"     
+                type: "string"
         "500":
-          description: "Could not obtain a class group"
+          description: "Could not obtain a class offer"
           schema:
             type: "object"
             properties:
@@ -952,8 +852,8 @@ paths:
                 type: "string"
     delete:
       tags:
-        - "Class Group"
-      summary: "Delete class group"
+        - "Class Offer"
+      summary: "Delete class offer"
       produces:
       - "application/json"
       parameters:
@@ -964,7 +864,7 @@ paths:
           format: "uuid"
       responses:
         "200":
-          description: "Successfully removed a class group"
+          description: "Successfully removed a class offer"
           schema:
             type: "object"
             properties:
@@ -984,13 +884,13 @@ paths:
               linkWpp:
                 type: "string"
               linkTel:
-                type: "string"     
+                type: "string"
         "500":
-          description: "Could not remove a class group"
+          description: "Could not remove a class offer"
           schema:
             type: "object"
             properties:
               message:
-                type: "string"  
-        
+                type: "string"
+
 

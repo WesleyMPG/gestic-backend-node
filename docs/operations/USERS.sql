@@ -51,3 +51,13 @@ INSERT INTO users VALUES (
   '$2b$10$8vhelS4QqxakdLi0HHeAPOnI2XYL1Qr.RyHntTbBvKs3T.rWxxIaG',
   true
   );  
+
+INSERT INTO users (
+  prof_id, user_name, user_email, user_password, user_status)
+VALUES (
+  '21f3392d-fbdc-4cb0-8e3c-5a11d6c069f1',
+  'coord1',
+  'coord1@teste.com',
+  '1234',
+  true
+       );

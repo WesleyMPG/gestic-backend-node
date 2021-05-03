@@ -17,9 +17,9 @@ router.post('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/', verifyJWT, async (req, res) => {
+router.get('/',  async (req, res) => {
     try {
-        const result = await projectService.getProjects(req.cookies['x-access-token']);
+        const result = await projectService.getProjects();
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -53,9 +53,9 @@ router.delete('/:id', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/:id', verifyJWT, async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const result = await projectService.getProjectById({ ...req.params, token: req.cookies['x-access-token'] });
+        const result = await projectService.getProjectById({ ...req.params });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
