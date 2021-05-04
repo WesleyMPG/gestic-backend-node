@@ -2,6 +2,7 @@ require('dotenv/config');
 
 const OfferRepository = require('../repository/Offer');
 const UserService = require('./User');
+const allowedProfiles = require('../permissions.json');
 
 class Offer {
     constructor() {
@@ -9,7 +10,7 @@ class Offer {
         this.userService = new UserService();
     }
 
-    insertOffer = async ({
+    insert = async ({
         token,
         name,
         code,
@@ -21,7 +22,8 @@ class Offer {
     }) => {
         try {
 
-            await this.userService.verifyUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] });
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
 
             const insertedOffer = await this.offerRepository.insertRow({
                 name,
@@ -48,7 +50,7 @@ class Offer {
         }
     }
 
-    getOfferById = async ({
+    getById = async ({
         id,
     }) => {
         try {
@@ -59,7 +61,7 @@ class Offer {
         }
     }
 
-    updateOffer = async ({
+    update = async ({
         token,
         id,
         name,
@@ -73,12 +75,12 @@ class Offer {
     }) => {
         try {
 
-            await this.userService.verifyUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] });
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
 
             const offer = await this.getOfferById({ id });
-            if (!offer) {
-                throw new Error('Invalid Id')
-            }
+            if (!offer) throw new Error('Invalid Id');
+
             const updatedOffer = await this.offerRepository.updateRow(
                 { id },
                 {
@@ -97,13 +99,14 @@ class Offer {
         }
     }
 
-    deleteOfferById = async ({
+    deleteById = async ({
         token,
         id
     }) => {
         try {
 
-            await this.userService.verifyUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] });
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
 
             const deletedOffer = await this.offerRepository.deleteRow({ id });
             return deletedOffer;
@@ -117,7 +120,8 @@ class Offer {
     ) => {
         try {
 
-            await this.userService.verifyUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] });
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
 
             const deletedOffers = await this.offerRepository.deleteRows({});
             return deletedOffers;

@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.post('/', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.insertProject({ ...req.body, token: req.cookies['x-access-token'] });
+        const result = await projectService.insert({
+            ...req.body, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -31,7 +32,7 @@ router.get('/',  async (req, res) => {
 
 router.put('/', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.updateProject({ ...req.body, token: req.cookies['x-access-token'] });
+        const result = await projectService.update({ ...req.body, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -43,7 +44,7 @@ router.put('/', verifyJWT, async (req, res) => {
 
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.deleteProject({ ...req.params, token: req.cookies['x-access-token'] });
+        const result = await projectService.delete({ ...req.params, token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -55,7 +56,7 @@ router.delete('/:id', verifyJWT, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const result = await projectService.getProjectById({ ...req.params });
+        const result = await projectService.getById({ ...req.params });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

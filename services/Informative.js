@@ -1,5 +1,7 @@
 const InformativeRepository = require('../repository/Informative');
-const UserService = require('./User')
+const UserService = require('./User');
+const allowedProfiles = require('../permissions.json').informative;
+
 
 class Informative {
     constructor() {
@@ -7,7 +9,6 @@ class Informative {
         this.userService = new UserService();
     }
 
-    // TODO: adicionar possibilidade de fazer upload de arquivos
     insert = async ({
         token,
         title,
@@ -15,18 +16,10 @@ class Informative {
         userId,
     }) => {
         try {
-            if (!(await this.userService.validateUserProfile(
-                { token,
-                  validProfileTags: ['TEC', 'COOR', 'PROF'] }))
-            ) throw new Error('Invalid profile.');
-
-            const user = await this.userService.getUserById({ id: userId });
-            if (!user) throw new Error('Invalid user.');
-
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             const info = await this.informativeRepository.insertRow({
-                title,
-                content,
-            });
+                title, content,});
             return info;
         } catch (err) {
             throw err;
@@ -53,13 +46,11 @@ class Informative {
 
     update = async ({ token, id, title, content }) => {
         try {
-            if (!(await this.userService.validateUserProfile({
-                token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))
-            ) throw new Error('Invalid Profile.');
-
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             const informative = await this.getById({ id });
 
-            if (!informative) throw new Error('Invalid Id');
+            if (!informative) throw new Error('Invalid informative');
 
             const updatedInformative = await this.informativeRepository.updateRow({ id }, { title, content });
             return updatedInformative;
@@ -70,17 +61,14 @@ class Informative {
 
     delete = async ({ token, id }) => {
         try {
-            if (!(await this.userService.validateUserProfile({
-                token, validProfileTags: ['COOR', 'PROF']}))
-            ) throw new Error('Invalid Profile');
-
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             const deletedInformative = await this.informativeRepository.deleteRow({ id });
             return deletedInformative;
         } catch (err) {
             throw (err);
         }
     }
-
 }
 
 

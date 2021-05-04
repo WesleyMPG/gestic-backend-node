@@ -34,7 +34,7 @@ app.get('/', verifyJWT, (req, res) => {
 });
 
 const server = app.listen(process.env.PORT, function () {
-    console.log(`Servidor ativo na porta ${process.env.DB_PORT || process.env.PORT}`);
+    console.log(`Servidor ativo na porta ${process.env.PORT || 3333}`);
 });
 
 process.on('SIGINT', () => {

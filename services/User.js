@@ -22,14 +22,17 @@ class User {
     }
 
     _validatePassword = async ({ password, passHash }) => {
-        return await bcrypt.compare(password, passHash)
+        return await bcrypt.compare(password, passHash);
     }
 
     validateUserProfile = async ({ token, validProfileTags = [] }) => {
         try {
             const { id, profileId } = await jwt.verify(token, process.env.SECRET);
-            const profile = await this.profileRepository.getRow({ id: profileId });
+            const user = await this.userRepository.getRow({ id });
+            const profile = await this.profileRepository.getRow({
+                id: profileId });
 
+            if (!user) return false;
             if (validProfileTags.find((prof) => prof === profile.tag)) return true;
 
             return false;
@@ -41,9 +44,8 @@ class User {
 
     verifyUserProfile = async ({ token, validProfileTags = [] }) => {
         if (!(await this.validateUserProfile({
-            token, validProfileTags
-        }))){
-            throw new Error('Invalid user');
+            token, validProfileTags }))){
+            throw new Error('Invalid user or profile.');
         }
     }
 
@@ -106,7 +108,7 @@ class User {
         }
     }
 
-    getUserById = async ({
+    getById = async ({
         token,
         id
     }) => {
@@ -119,7 +121,7 @@ class User {
         }
     }
 
-    getListOfUsers = async ({
+    getUsers = async ({
         token,
         status = undefined,
     }) => {
@@ -139,7 +141,7 @@ class User {
         }
     }
 
-    updateUser = async ({
+    update = async ({
         token,
         id,
         name,
@@ -164,7 +166,7 @@ class User {
         }
     }
 
-    deleteUserById = async ({
+    deleteById = async ({
         token,
         id
     }) => {

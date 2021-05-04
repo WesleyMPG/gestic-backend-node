@@ -12,7 +12,9 @@ const router = express.Router();
 router.post('/', verifyJWT, upload.single('file'), async (req, res) => {
     const { file } = req;
     try {
-        const result = await fileService.insertFile({ ...req.body, ref: req.file.filename, token: req.cookies['x-access-token'] });
+        const result = await fileService.insert({
+            ...req.body, ref: req.file.filename,
+            token: req.cookies['x-access-token'] });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

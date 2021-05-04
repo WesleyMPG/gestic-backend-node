@@ -1,8 +1,7 @@
 require('dotenv/config');
-
-
 const FileRepository = require('../repository/File');
 const UserService = require('./User');
+const allowedProfiles = require('../permissions.json').file;
 
 class File {
     constructor() {
@@ -10,7 +9,7 @@ class File {
         this.userService = new UserService();
     }
 
-    insertFile = async ({
+    insert = async ({
         token,
         name,
         tag,
@@ -18,8 +17,8 @@ class File {
     }) => {
         try {
 
-            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
-
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             const insertedFile = await this.fileRepository.insertRow({
                 name,
                 tag,
@@ -38,8 +37,9 @@ class File {
     }) => {
         try{
 
-            if (!(await this.userService.validateUserProfile({token, validProfileTags: ['COOR', 'PROF', 'MONI'] }))) throw new Error('Invalid Profile.');
-            
+            await this.userService.validateUserProfile({
+                token, validProfileTags: allowedProfiles });
+
             const files = await this.fileRepository.getRows({tag});
             return files;
         } catch(err) {
