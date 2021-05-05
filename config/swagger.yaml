@@ -17,8 +17,10 @@ tags:
   description: "Operations related to file manipulation"
 - name: "Project"
   description: "Operations related to active projects"
-- name: "Offer"
+- name: "Class Offer"
   description: "Operations related to class offers"
+- name: "Informatives"
+  description: "Operations related to informatives"
 paths:
   /access/login:
     post:
@@ -610,7 +612,7 @@ paths:
   /offer:
     get:
       tags:
-      - "Class offer"
+      - "Class Offer"
       summary: "Get a list of all class offers"
       produces:
       - "application/json"
@@ -892,5 +894,180 @@ paths:
             properties:
               message:
                 type: "string"
-
+  /informative:
+    get:
+      tags:
+      - "Informatives"
+      summary: "Get a list of all informatives"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Obtained a list of all informatives"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                title:
+                  type: "string"
+                content:
+                  type: "string"
+        "500":
+          description: "Could not obtain a list of all informatives"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    post:
+      tags:
+      - "Informatives"
+      summary: "Insert a informative"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              content:
+                type: "string"
+      responses:
+        "200":
+          description: "Inserted a informative"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              title:
+                type: "string"
+              content:
+                type: "string"
+        "500":
+          description: "Could not insert a informative"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    put:
+      tags:
+      - "Informatives"
+      summary: " Update informative information"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              title:
+                type: "string"
+              content:
+                type: "string"
+      responses:
+        "200":
+          description: "Sucessfully updated a informative"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              title:
+                type: "string"
+              content:
+                type: "string"
+        "500":
+          description: "Could not update a informative"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /informative/:id:
+    get:
+      tags:
+        - "Informatives"
+      summary: "Get informative information"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Obtained a informative"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              title:
+                type: "string"
+              content:
+                type: "string"
+        "500":
+          description: "Could not obtain a informative"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Informatives"
+      summary: "Delete informative"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successfully removed a informative"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              title:
+                type: "string"
+              content:
+                type: "string"
+        "500":
+          description: "Could not remove a informative"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
 
