@@ -14,7 +14,7 @@ router.post('/', verifyJWT, upload.single('file'), async (req, res) => {
     try {
         const result = await fileService.insert({
             ...req.body, ref: req.file.filename,
-            token: req.cookies['x-access-token'] });
+            token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -31,7 +31,8 @@ router.get('/download', verifyJWT, function (req, res) {
 
 router.get('/', verifyJWT, async (req, res) => {
     try {
-        const result = await fileService.getFiles({ ...req.body, token: req.cookies['x-access-token'] });
+        const result = await fileService.getFiles({
+            ...req.body, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

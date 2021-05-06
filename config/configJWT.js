@@ -3,7 +3,8 @@ require('dotenv/config');
 const jwt = require('jsonwebtoken');
 
 function verifyJWT(req, res, next) {
-    const token = req.cookies['x-access-token'];
+    const auth = req.headers.authorization;
+    const token = auth.split(' ')[1];
     if (!token) return res.status(401).json({ auth: false, message: 'No token provided.' });
 
     jwt.verify(token, process.env.SECRET, function(err, decoded) {
@@ -11,6 +12,7 @@ function verifyJWT(req, res, next) {
       // se tudo estiver ok, salva no request para uso posterior
       req.userId = decoded.id;
       req.profileId = decoded.profileId;
+      req.token = token
       next();
     });
 }

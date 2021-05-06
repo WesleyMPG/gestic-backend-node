@@ -2,7 +2,7 @@ require('dotenv/config');
 
 const OfferRepository = require('../repository/Offer');
 const UserService = require('./User');
-const allowedProfiles = require('../permissions.json');
+const allowedProfiles = require('../permissions.json').offer;
 
 class Offer {
     constructor() {
@@ -55,6 +55,7 @@ class Offer {
     }) => {
         try {
             const offer = await this.offerRepository.getRow({ id });
+            if (!offer) throw new Error('Invalid id.');
             return offer;
         } catch (err) {
             throw err;
@@ -109,6 +110,7 @@ class Offer {
                 token, validProfileTags: allowedProfiles });
 
             const deletedOffer = await this.offerRepository.deleteRow({ id });
+            if (!deletedOffer) throw new Error('Invalid id.');
             return deletedOffer;
         } catch (err) {
             throw err;

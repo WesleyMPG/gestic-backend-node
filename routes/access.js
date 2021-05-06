@@ -7,9 +7,7 @@ const router = express.Router();
 
 router.post('/login', async (req, res, next) => {
     try {
-        const { result, token } = await userService.login(req.body);
-        const lifeTime = 900;
-        res.cookie('x-access-token', token, { httpOnly: true, maxAge: lifeTime * 1000 });
+        const result = await userService.login(req.body);
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -21,7 +19,7 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const result = await userService.register({...req.body});
+        const result = await userService.register({ ...req.body });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -33,8 +31,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/logout', verifyJWT, async (req, res) => {
     try {
-        res.cookie('x-access-token', '', {maxAge: 1});
-        res.json({ auth: false});
+        res.json({ auth: false, token: null });
 //        res.redirect('/');
     } catch (err) {
         console.log(err);

@@ -4,7 +4,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 const UserRepository = require('../repository/User');
 const ProfileRepository = require('../repository/Profile');
+const allowedProfiles = require('../permissions.json').user;
 
+
+// TODO: verificar se as funcionalidades estão de acordo
+// com o que será preciso
 class User {
     constructor() {
         this.userRepository = new UserRepository();
@@ -64,8 +68,7 @@ class User {
                 const token = jwt.sign({ id, profileId }, process.env.SECRET, {
                     expiresIn: 900  // seconds
                 });
-                const result = { ...user, profileTag: profile.tag, auth: true, password: '*******' };
-                return { result, token };
+                return { ...user, profileTag: profile.tag, auth: true, password: '*******', token };
             } else {
                 throw new Error('Invalid Login!');
             }
@@ -82,7 +85,6 @@ class User {
         try {
             const tag = 'ALUN';
             const profile = await this.profileRepository.getRow({ tag });
-
             if (!profile) throw new Error('Invalid tag.');
 
             let user = await this.userRepository.getRow({ email });
@@ -115,6 +117,7 @@ class User {
         try {
             const user = await this.userRepository.getRow({ id });
             const profile = await this.profileRepository.getRow({ id: user.profileId });
+            if (!user) throw new Error('Invalid id.')
             return { ...user, profileTag: profile.tag, password: '*******' };
         } catch (err) {
             throw err;
@@ -127,7 +130,8 @@ class User {
     }) => {
         try {
 
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
+            await this.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             let users;
             if (status === undefined) {
                 users = await this.userRepository.getRows();
@@ -171,11 +175,10 @@ class User {
         id
     }) => {
         try {
-            if (!(await this.validateUserProfile({ token, validProfileTags: ['TEC','COOR', 'MONI'] }))) throw new Error('Invalid Profile.');
-            const user = await this.userRepository.getRow({ id });
-            if (!user) throw new Error('Invalid Id.')
-
+            await this.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
             const deletedUser = await this.userRepository.deleteRow({ id });
+            if (!deletedUser) throw new Error('Invalid Id.');
 
             return { ...deletedUser, password: '*******' }
         } catch (err) {

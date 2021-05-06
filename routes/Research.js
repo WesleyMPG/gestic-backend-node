@@ -33,7 +33,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', verifyJWT, async (req, res) => {
     try {
         const result = await groupService.insert({
-            ...req.body, token: req.cookies['x-access-token']});
+            ...req.body, token: req.token});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -46,7 +46,7 @@ router.post('/', verifyJWT, async (req, res) => {
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await groupService.update({
-            ...req.body, token: req.cookies['x-access-token'] });
+            ...req.body, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -58,7 +58,8 @@ router.put('/', verifyJWT, async (req, res) => {
 
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await groupService.delete({ ...req.params, token: req.cookies['x-access-token'] });
+        const result = await groupService.delete({
+            ...req.params, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

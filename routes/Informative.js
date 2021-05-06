@@ -8,8 +8,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const result = await informativeService.get({
-            ...req.body});
+        const result = await informativeService.get({ ...req.body });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -35,7 +34,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.insert({
-            ...req.body, token: req.cookies['x-access-token'],
+            ...req.body, token: req.token,
             userId: req.userId
         });
         res.status(200).json(result);
@@ -50,7 +49,7 @@ router.post('/', verifyJWT, async (req, res) => {
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.update({
-            ...req.body, token: req.cookies['x-access-token'] });
+            ...req.body, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -63,7 +62,7 @@ router.put('/', verifyJWT, async (req, res) => {
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.delete({
-            ...req.params, token: req.cookies['x-access-token'] });
+            ...req.params, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

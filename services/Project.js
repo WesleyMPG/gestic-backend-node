@@ -44,6 +44,7 @@ class Project {
     }) => {
         try {
             const selectedProject = await this.projectRepository.getRow({id});
+            if (!selectedProject) throw new Error('Invalid id.');
             return selectedProject;
         } catch (err) {
             throw err;
@@ -56,13 +57,11 @@ class Project {
         name,
         description,
         userId
-
     }) => {
         try {
 
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-
             const updatedProject = await this.projectRepository.updateRow(
                 { id },
                 {
@@ -85,6 +84,7 @@ class Project {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
             const deletedProject = await this.projectRepository.deleteRow({id});
+            if (!deletedProject) throw new Error('Invalid id.');
             return deletedProject;
         } catch (err) {
             throw err;
