@@ -2,18 +2,15 @@ require('dotenv/config');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
-const UserRepository = require('../repository/User');
-const ProfileRepository = require('../repository/Profile');
 const allowedProfiles = require('../permissions.json').user;
+const uuid = require('uuid');
+
+const db = require('../models')
 
 
 // TODO: verificar se as funcionalidades estão de acordo
 // com o que será preciso
 class User {
-    constructor() {
-        this.userRepository = new UserRepository();
-        this.profileRepository = new ProfileRepository();
-    }
 
     _generateHash = async ({ password }) => {
         try {
@@ -32,9 +29,8 @@ class User {
     validateUserProfile = async ({ token, validProfileTags = [] }) => {
         try {
             const { id, profileId } = await jwt.verify(token, process.env.SECRET);
-            const user = await this.userRepository.getRow({ id });
-            const profile = await this.profileRepository.getRow({
-                id: profileId });
+            const user = await db.user.findByPk(id);
+            const profile = await db.profile.findByPk(profileId);
 
             if (!user) return false;
             if (validProfileTags.find((prof) => prof === profile.tag)) return true;
@@ -48,7 +44,7 @@ class User {
 
     verifyUserProfile = async ({ token, validProfileTags = [] }) => {
         if (!(await this.validateUserProfile({
-            token, validProfileTags }))){
+                token, validProfileTags }))) {
             throw new Error('Invalid user or profile.');
         }
     }
@@ -58,17 +54,20 @@ class User {
         password
     }) => {
         try {
-            const user = await this.userRepository.getRow({
-                email
-            });
+            const user = await db.user.findOne({
+                where: {
+                    email
+                }
+            })
 
             if (user && await this._validatePassword({ password, passHash: user.password }) && user.status) {
                 const { id, profileId } = user;
-                const profile = await this.profileRepository.getRow({ id: user.profileId });
+                const profile = await db.profile.findByPk(user.profileId);
                 const token = jwt.sign({ id, profileId }, process.env.SECRET, {
                     expiresIn: 900  // seconds
                 });
-                return { ...user, profileTag: profile.tag, auth: true, password: '*******', token };
+                return { ...user.get(), profileTag: profile.tag, 
+                            auth: true, password: '*******', token };
             } else {
                 throw new Error('Invalid Login!');
             }
@@ -83,16 +82,24 @@ class User {
         password,
     }) => {
         try {
-            const tag = 'ALUN';
-            const profile = await this.profileRepository.getRow({ tag });
+            const profile = await db.profile.findOne({
+                where: {
+                    tag: 'ALUN'
+                }
+            });
             if (!profile) throw new Error('Invalid tag.');
 
-            let user = await this.userRepository.getRow({ email });
+            const user = await db.user.findOne({
+                where: {
+                    email
+                }
+            });
+
             if (user) throw new Error('Invalid email.')
 
             password = await this._generateHash({ password });
-
-            const createdUser = await this.userRepository.insertRow({
+            const createdUser = await db.user.create({
+                id: uuid.v4(),
                 profileId: profile.id,
                 name,
                 email,
@@ -101,9 +108,9 @@ class User {
             });
 
             return {
-                ...createdUser,
+                ...createdUser.get(),
                 password: '*******',
-                profileTag: tag
+                profileTag: 'ALUN'
             };
         } catch (err) {
             throw err;
@@ -115,10 +122,10 @@ class User {
         id
     }) => {
         try {
-            const user = await this.userRepository.getRow({ id });
-            const profile = await this.profileRepository.getRow({ id: user.profileId });
-            if (!user) throw new Error('Invalid id.')
-            return { ...user, profileTag: profile.tag, password: '*******' };
+            const user = await db.user.findByPk(id);
+            const profile = await db.profile.findByPk(user.profileId);
+            if (!user) throw new Error('User not found.');
+            return { ...user.get(), profileTag: profile.tag, password: '*******' };
         } catch (err) {
             throw err;
         }
@@ -134,10 +141,12 @@ class User {
                 token, validProfileTags: allowedProfiles });
             let users;
             if (status === undefined) {
-                users = await this.userRepository.getRows();
+                users = await db.user.findAll();
             }
             else {
-                users = await this.userRepository.getRows({ status });
+                users = await db.user.findAll({ 
+                    where: { status }
+                });
             }
             return users.map(user => ({ ...user, password: '*******' }));
         } catch (err) {
@@ -148,23 +157,30 @@ class User {
     update = async ({
         token,
         id,
-        name,
-        status,
+        name = undefined,
+        status = undefined,
         profileId = undefined,
+        chang_psswd = undefined,
     }) => {
         // TODO: modificar todas as funções de update para que
         // updateRow aceite uma quantidade variavel de campos
         try {
-            const user = await this.userRepository.getRow({ id });
+            await this.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
+            let user = await db.user.findByPk(id);
             if (!user) throw new Error('User not found.');
-            if (profileId){
-                const profile = this.profileRepository.getRow({profileId});
-                if (!profile) throw new Error('Invalid Profile');
-            } else {
-                profileId = user.profileId
-            }
-            const updatedUser = await this.userRepository.updateRow({ id }, { name });
-            return { ...updatedUser, password: '*******' };
+            await db.user.update({ 
+                name: name ? name : user.name,
+                status: status ? status : user.status,
+                profileId: profileId ? profileId : user.profileId,
+                change_psswd: change_psswd ? chang_psswd : user.chang_psswd
+            }, {
+                where: {
+                    id
+                }
+            });
+            user = await db.user.findByPk(id);
+            return { ...user.get(), password: '*******' };
         } catch (err) {
             throw err;
         }
@@ -177,10 +193,12 @@ class User {
         try {
             await this.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const deletedUser = await this.userRepository.deleteRow({ id });
-            if (!deletedUser) throw new Error('Invalid Id.');
+            const user = await db.user.findByPk(id);
+            if (!user) throw new Error('Invalid Id.')
 
-            return { ...deletedUser, password: '*******' }
+            await user.destroy()
+
+            return { ...user.get() }
         } catch (err) {
             throw err;
         }

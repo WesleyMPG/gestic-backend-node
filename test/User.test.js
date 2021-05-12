@@ -1,7 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
-const knexConfig = require('../config/knexfile')['development']
-const knex = require('knex')(knexConfig);
+const config = require('../config/database');
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(config);
 
 let alunId = null;
 let alunToken = null;
@@ -12,7 +13,7 @@ let coordToken = null;
 describe('Testing user routes',  () => {
 
     afterAll(() => {
-        knex.destroy();
+        sequelize.close();
     })
 
     it('Should create an user', async () => {
@@ -34,7 +35,7 @@ describe('Testing user routes',  () => {
         const res = await request(app)
             .post('/access/login')
             .send({
-                email : "coord1@teste.com",
+                email : "coord1@ic.ufal.br",
                 password: "1234"
             });
         expect(res.ok).toBeTruthy();
@@ -68,6 +69,7 @@ describe('Testing user routes',  () => {
             .set('Authorization', coordToken);
         expect(coordToken).toEqual(expect.anything());
         expect(res.ok).toBeTruthy();
+        //TODO: tentar um get no usuario deletado
     })
 
     it('Should get an user', async () => {

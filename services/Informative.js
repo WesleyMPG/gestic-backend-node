@@ -1,11 +1,10 @@
-const InformativeRepository = require('../repository/Informative');
-const UserService = require('./User');
-const allowedProfiles = require('../permissions.json').informative;
-
+const UserService = require("./User")
+const allowedProfiles = require('../permissions.json').project;
+const db = require('../models')
+const uuid = require('uuid');
 
 class Informative {
     constructor() {
-        this.informativeRepository = new InformativeRepository();
         this.userService = new UserService();
     }
 
@@ -13,13 +12,15 @@ class Informative {
         token,
         title,
         content,
-        userId,
     }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const info = await this.informativeRepository.insertRow({
-                title, content,});
+            const info = await db.informative.create({
+                id: uuid.v4(),
+                title,
+                content,
+            });
             return info;
         } catch (err) {
             throw err;
@@ -28,7 +29,7 @@ class Informative {
 
     get = async () => {
         try {
-            const informatives = await this.informativeRepository.getRows();
+            const informatives = await db.informative.findAll();
             return informatives;
         } catch (err) {
             throw err;
@@ -37,23 +38,34 @@ class Informative {
 
     getById = async ({ id }) => {
         try {
-            const informative = await this.informativeRepository.getRow({ id });
+            const informative = await db.informative.findByPk(id);
             return informative;
         } catch (err) {
             throw err;
         }
     }
 
-    update = async ({ token, id, title, content }) => {
+    update = async ({ 
+        token,
+        id,
+        title = undefined,
+        content = undefined,
+    }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const informative = await this.getById({ id });
+            let informative = await db.informative.findByPk(id);
 
             if (!informative) throw new Error('Invalid informative');
 
-            const updatedInformative = await this.informativeRepository.updateRow({ id }, { title, content });
-            return updatedInformative;
+            await db.informative.update({
+                title: title ? title : informative.title,
+                content: content ? content : informative.content,
+            }, {
+                where: { id },
+            });
+            informative = await db.informative.findByPk(id);
+            return informative.get();
         } catch (err) {
             throw err;
         }
@@ -63,7 +75,8 @@ class Informative {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const deletedInformative = await this.informativeRepository.deleteRow({ id });
+            const deletedInformative = await db.informative.findByPk({ id });
+            deletedInformative.destroy();
             return deletedInformative;
         } catch (err) {
             throw (err);

@@ -22,10 +22,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      user_cpf: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       user_email: {
         allowNull: false,
         type: Sequelize.STRING
@@ -35,6 +31,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       user_status: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      change_psswd: {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },

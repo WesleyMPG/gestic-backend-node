@@ -1,38 +1,47 @@
 'use strict';
 module.exports = (sequelize, Sequelize) => {
     const Offer = sequelize.define('offer', {
-        offer_id: {
+        id: {
             allowNull: false,
             primaryKey: true,
-            type: Sequelize.UUID
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            field: 'offer_id'
         },
-        offer_name: {
+        name: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_name'
         },
-        offer_code: {
+        code: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_code'
         },
-        offer_code_classroom: {
+        codeClassroom: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_code_classroom'
         },
-        offer_link_classroom: {
+        linkClassroom: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_link_classroom'
         },
-        offer_link_meets: {
+        linkMeets: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_link_meets'
         },
-        offer_link_wpp: {
+        linkWpp: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_link_wpp'
         },
-        offer_link_tel: {
+        linkTel: {
             allowNull: false,
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: 'offer_link_tel'
         },
     }, {
         timestamps: true

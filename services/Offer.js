@@ -1,12 +1,13 @@
 require('dotenv/config');
 
-const OfferRepository = require('../repository/Offer');
 const UserService = require('./User');
+const db = require('../models')
 const allowedProfiles = require('../permissions.json').offer;
+const { UUID } = require('sequelize');
+const uuid = require('uuid');
 
 class Offer {
     constructor() {
-        this.offerRepository = new OfferRepository();
         this.userService = new UserService();
     }
 
@@ -21,11 +22,11 @@ class Offer {
         linkTel
     }) => {
         try {
-
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
 
-            const insertedOffer = await this.offerRepository.insertRow({
+            const insertedOffer = await db.offer.create({
+                id: uuid.v4(),
                 name,
                 code,
                 codeClassroom,
@@ -43,7 +44,7 @@ class Offer {
     getOffers = async (
     ) => {
         try {
-            const offers = await this.offerRepository.getRows();
+            const offers = await db.offer.findAll();
             return offers;
         } catch (err) {
             throw err;
@@ -54,8 +55,8 @@ class Offer {
         id,
     }) => {
         try {
-            const offer = await this.offerRepository.getRow({ id });
-            if (!offer) throw new Error('Invalid id.');
+            const offer = await db.offer.findByPk(id);
+            if (!offer) throw new Error('Offer Not found.');
             return offer;
         } catch (err) {
             throw err;
@@ -65,13 +66,13 @@ class Offer {
     update = async ({
         token,
         id,
-        name,
-        code,
-        codeClassroom,
-        linkClassroom,
-        linkMeets,
-        linkWpp,
-        linkTel
+        name = undefined,
+        code = undefined,
+        codeClassroom = undefined,
+        linkClassroom = undefined,
+        linkMeets = undefined,
+        linkWpp = undefined,
+        linkTel = undefined
 
     }) => {
         try {
@@ -79,22 +80,24 @@ class Offer {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
 
-            const offer = await this.getOfferById({ id });
+            let offer = await db.offer.findByPk(id);
             if (!offer) throw new Error('Invalid Id');
 
-            const updatedOffer = await this.offerRepository.updateRow(
-                { id },
+            await db.offer.update(
                 {
-                    name,
-                    code,
-                    codeClassroom,
-                    linkClassroom,
-                    linkMeets,
-                    linkWpp,
-                    linkTel
+                    name: name ? name : offer.name,
+                    code: code ? code : offer.code,
+                    codeClassroom: codeClassroom ? codeClassroom : offer.codeClassroom,
+                    linkClassroom: linkClassroom ? linkClassroom : offer.linkClassroom,
+                    linkMeets: linkMeets ? linkMeets : offer.linkMeets,
+                    linkWpp: linkWpp ? linkWpp : offer.linkWpp,
+                    linkTel: linkTel ? linkTel : offer.linkTel,
+                }, {
+                    where: { id }
                 }
             );
-            return updatedOffer;
+            offer = await db.offer.findByPk(id);
+            return offer;
         } catch (err) {
             throw err;
         }
@@ -105,13 +108,12 @@ class Offer {
         id
     }) => {
         try {
-
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
 
-            const deletedOffer = await this.offerRepository.deleteRow({ id });
-            if (!deletedOffer) throw new Error('Invalid id.');
-            return deletedOffer;
+            const offer = await db.offer.findByPk(id);
+            await offer.destroy()
+            return offer.get();
         } catch (err) {
             throw err;
         }
@@ -121,12 +123,14 @@ class Offer {
         token
     ) => {
         try {
-
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
 
-            const deletedOffers = await this.offerRepository.deleteRows({});
-            return deletedOffers;
+            const offers = await db.offer.findAll();
+            for (let i = 0; i < offers.length; ++i) {
+                await offers[i].destroy()
+            }
+            return offers;
         } catch (err) {
             throw err;
         }

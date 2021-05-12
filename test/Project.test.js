@@ -1,7 +1,9 @@
 const request = require('supertest');
 const app = require('../app');
-const knexConfig = require('../config/knexfile')['development']
-const knex = require('knex')(knexConfig);
+const config = require('../config/database');
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(config);
+
 
 let coordToken = null;
 let coordId = null
@@ -13,7 +15,7 @@ describe('Testing project routes', () => {
         const res = await request(app)
             .post('/access/login')
             .send({
-                email : "coord1@teste.com",
+                email : "coord1@ic.ufal.br",
                 password: "1234"
             });
         coordToken = 'bearer ' + res.body.token;
@@ -21,7 +23,7 @@ describe('Testing project routes', () => {
     })
 
     afterAll(() => {
-        knex.destroy();
+        sequelize.close();
     })
 
     it('Should get all projects', async () => {
@@ -40,12 +42,12 @@ describe('Testing project routes', () => {
                 userId: coordId
                 })
             .set('Authorization', coordToken);
+            console.log(res.headers);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
                 'userId');
         projectId = res.body.id;
     })
-
     // rota de update
 
     it('Should get a project', async () => {
@@ -68,5 +70,4 @@ describe('Testing project routes', () => {
             .get('/project/' + projectId);
         expect(resGet.ok).toBeFalsy();
         })
-
 })

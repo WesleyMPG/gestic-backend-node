@@ -21,7 +21,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/access', routes.access);
 app.use('/user', routes.user);
-app.use('/file', routes.file);
 app.use('/project', routes.project);
 app.use('/offer', routes.offer);
 app.use('/informative', routes.informative);

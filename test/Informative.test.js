@@ -1,7 +1,9 @@
 const request = require('supertest');
 const app = require('../app');
-const knexConfig = require('../config/knexfile')['development']
-const knex = require('knex')(knexConfig);
+const config = require('../config/database');
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(config);
+
 
 let coordToken = null;
 let infoId = null;
@@ -12,14 +14,14 @@ describe('Testing informatives routes', () => {
         const res = await request(app)
             .post('/access/login')
             .send({
-                email : "coord1@teste.com",
+                email : "coord1@ic.ufal.br",
                 password: "1234"
             });
         coordToken = 'bearer ' + res.body.token;
     })
 
     afterAll(() => {
-        knex.destroy();
+        sequelize.close();
     })
 
     it('Should get all informatives', async () => {
