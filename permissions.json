@@ -4,5 +4,5 @@
   "informative": ["COOR", "TEC", "PROF"],
   "offer": ["COOR", "TEC", "PROF"],
   "file": ["COOR", "TEC", "PROF"],
-  "user": ["COOR", "TEC", "PROF"]
+  "user": ["TEC"]
 }

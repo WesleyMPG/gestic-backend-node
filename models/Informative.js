@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, Sequelize) => {
-    const Informative = sequelize.define('profile', {
+    const Informative = sequelize.define('informative', {
         id: {
             allowNull: false,
             primaryKey: true,

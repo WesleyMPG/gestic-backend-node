@@ -62,6 +62,44 @@ describe('Testing user routes',  () => {
     })
 
     // rota de update
+    it('Should update an user', async () => {
+        const res = await request(app)
+            .put('/user')
+            .send({
+                id: alunId,
+                name: 'aluno4',
+                profileId: '70039c9e-5c27-41fc-bd5a-ac4f00968887',
+            })
+            .set('Authorization', alunToken);
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('id', 'profileId',
+        'name', 'email', 'password', 'status', 'profileTag');
+        expect(res.body.name).toEqual('aluno4');
+        expect(res.body.profileId).toEqual('70039c9e-5c27-41fc-bd5a-ac4f00968887');
+    })
+
+    it('Should change user password', async () => {
+        const res = await request(app)
+            .put('/user')
+            .send({
+                id: alunId,
+                old_password: '1234',
+                new_password: '12345',
+            })
+            .set('Authorization', alunToken);
+        expect(res.ok).toBeTruthy();
+    })
+/*
+    it('Should login with the new password', async() => {
+        const resLogin = await request(app)
+            .post('/access/login')
+            .send({
+                email : "aluno3@ic.ufal.br",
+                password: "12345"
+            });
+        expect(resLogin.ok).toBeTruthy();
+    })
+*/
 
     it('Should delete an user', async () =>{
         const res = await request(app)
@@ -69,7 +107,13 @@ describe('Testing user routes',  () => {
             .set('Authorization', coordToken);
         expect(coordToken).toEqual(expect.anything());
         expect(res.ok).toBeTruthy();
-        //TODO: tentar um get no usuario deletado
+        const resLogin = await request(app)
+            .post('/access/login')
+            .send({
+                email : "aluno3@ic.ufal.br",
+                password: "1234"
+            });
+        expect(resLogin.ok).toBeFalsy();
     })
 
     it('Should get an user', async () => {
@@ -78,7 +122,8 @@ describe('Testing user routes',  () => {
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'profileId',
-        'name', 'email', 'password', 'status', 'profileTag');
+        'name', 'email', 'password', 'status', 'change_psswd',
+        'profileTag');
     })
 
 })

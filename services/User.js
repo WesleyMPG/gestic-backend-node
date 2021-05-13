@@ -16,6 +16,7 @@ class User {
         try {
             const salt = await bcrypt.genSalt();
             const passHash = await bcrypt.hash(password, salt);
+            //console.log(passHash + '\n' + password + '\n\n');
             return passHash;
         } catch (err) {
             throw err
@@ -59,8 +60,8 @@ class User {
                     email
                 }
             })
-
-            if (user && await this._validatePassword({ password, passHash: user.password }) && user.status) {
+            if (user && await this._validatePassword({
+                    password, passHash: user.password }) && user.status) {
                 const { id, profileId } = user;
                 const profile = await db.profile.findByPk(user.profileId);
                 const token = jwt.sign({ id, profileId }, process.env.SECRET, {
@@ -104,7 +105,6 @@ class User {
                 name,
                 email,
                 password,
-                status: true
             });
 
             return {
@@ -157,30 +157,60 @@ class User {
     update = async ({
         token,
         id,
+        idInToken,
         name = undefined,
         status = undefined,
         profileId = undefined,
-        chang_psswd = undefined,
+        change_psswd = undefined,
+        old_password = undefined,
+        new_password = undefined,
     }) => {
-        // TODO: modificar todas as funções de update para que
-        // updateRow aceite uma quantidade variavel de campos
         try {
-            await this.verifyUserProfile({
+            const isAdminProfile = await this.validateUserProfile({
                 token, validProfileTags: allowedProfiles });
+            const isOwner = (id === idInToken);
+            if (!isAdminProfile && !isOwner) {
+                    throw new Error('Invalid id or profile.')
+            }
             let user = await db.user.findByPk(id);
             if (!user) throw new Error('User not found.');
             await db.user.update({ 
                 name: name ? name : user.name,
                 status: status ? status : user.status,
                 profileId: profileId ? profileId : user.profileId,
-                change_psswd: change_psswd ? chang_psswd : user.chang_psswd
+                change_psswd: change_psswd ? change_psswd : user.change_psswd,
             }, {
                 where: {
                     id
                 }
             });
+            if (old_password && new_password) {
+                this.change_password({id, old_password, new_password});
+            }
             user = await db.user.findByPk(id);
             return { ...user.get(), password: '*******' };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    change_password = async ({
+        id, old_password, new_password
+    }) => {
+        try {
+            let user = await db.user.findByPk(id); 
+            if(!user) throw new Error('User not found.')
+            if (!(await this._validatePassword({
+                password: old_password, passHash: user.password }))){
+                throw new Error("Old password doesn't match.");
+            }
+            new_password = await this._generateHash({
+                password: new_password });
+            await db.user.update({
+                password: new_password,
+            }, {
+                where: { id }
+            });
         } catch (err) {
             throw err;
         }

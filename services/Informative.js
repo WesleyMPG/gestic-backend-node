@@ -75,7 +75,7 @@ class Informative {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const deletedInformative = await db.informative.findByPk({ id });
+            const deletedInformative = await db.informative.findByPk(id);
             deletedInformative.destroy();
             return deletedInformative;
         } catch (err) {
