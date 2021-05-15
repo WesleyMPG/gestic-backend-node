@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         content: {
             allowNull: false,
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(500),
             field: 'info_content',
         },
     }, {

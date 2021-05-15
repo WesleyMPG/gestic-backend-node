@@ -28,7 +28,7 @@ class Project {
                 description,
                 userId
             });
-            return project;
+            return project.get();
         } catch (err) {
             throw err;
         }
@@ -48,8 +48,8 @@ class Project {
     }) => {
         try {
             const selectedProject = await db.project.findByPk(id);
-            if (!selectedProject) throw new Error('Invalid id.');
-            return selectedProject;
+            if (!selectedProject) throw new Error('Project not found.');
+            return selectedProject.get();
         } catch (err) {
             throw err;
         }
@@ -58,25 +58,22 @@ class Project {
     update = async ({
         token,
         id,
-        name,
-        description,
-        userId
+        name = undefined,
+        description = undefined,
+        userId = undefined,
     }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
 
-            if (userId) {
-                const user = await db.user.findByPk(userId);
-                if (!user || (user.profileTag != 'COOR' || user.profileTag != 'PROF')) {
-                    throw new Error('Invalid user');
-                }
-            }
+            let project = await db.project.findByPk(id);
+            if (!project) throw new Error('Project not found.');
+
             await db.project.update(
                 {
-                    name,
-                    description,
-                    userId
+                    name: name ? name : project.name,
+                    description: description ? description : project.description,
+                    userId: userId ? userId : project.userId,
                 },
                 {
                     where: {
@@ -84,24 +81,20 @@ class Project {
                     }
                 }
             );
-
-            const updatedProject = await db.project.findByPk(id);
-            return updatedProject.get();
+            project = await db.project.findByPk(id);
+            return project.get();
         } catch (err) {
             throw err;
         }
     }
 
-    delete = async ({
-        token,
-        id
-    }) => {
+    delete = async ({ token,id }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
             const deletedProject = await db.project.findByPk(id);
             await deletedProject.destroy();
-            return deletedProject;
+            return deletedProject.get();
         } catch (err) {
             throw err;
         }

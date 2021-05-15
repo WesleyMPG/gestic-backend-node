@@ -8,8 +8,6 @@ let alunId = null;
 let alunToken = null;
 let coordToken = null;
 
-// TODO: testes das rotas de update de todos os services
-
 describe('Testing user routes',  () => {
 
     afterAll(() => {
@@ -40,7 +38,7 @@ describe('Testing user routes',  () => {
             });
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('token');
-        coordToken = 'bearer ' + res.body.token;
+        coordToken = 'Bearer ' + res.body.token;
     })
 
     it('Should logout', async () => {
@@ -50,7 +48,7 @@ describe('Testing user routes',  () => {
                 email: 'aluno3@ic.ufal.br',
                 password: '1234'
             })
-        alunToken = 'bearer ' + resLogin.body.token;
+        alunToken = 'Bearer ' + resLogin.body.token;
         const res = await request(app)
             .get('/access/logout')
             .set('Authorization', alunToken);
@@ -61,7 +59,6 @@ describe('Testing user routes',  () => {
         expect(res.body.token).toBeNull();
     })
 
-    // rota de update
     it('Should update an user', async () => {
         const res = await request(app)
             .put('/user')

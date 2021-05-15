@@ -21,26 +21,31 @@ module.exports = (sequelize, Sequelize) => {
         codeClassroom: {
             allowNull: false,
             type: Sequelize.STRING,
+            defaultValue: '#',
             field: 'offer_code_classroom'
         },
         linkClassroom: {
             allowNull: false,
             type: Sequelize.STRING,
+            defaultValue: '#',
             field: 'offer_link_classroom'
         },
         linkMeets: {
             allowNull: false,
             type: Sequelize.STRING,
+            defaultValue: '#',
             field: 'offer_link_meets'
         },
         linkWpp: {
             allowNull: false,
             type: Sequelize.STRING,
+            defaultValue: '#',
             field: 'offer_link_wpp'
         },
         linkTel: {
             allowNull: false,
             type: Sequelize.STRING,
+            defaultValue: '#',
             field: 'offer_link_tel'
         },
     }, {

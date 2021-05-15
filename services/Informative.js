@@ -7,7 +7,7 @@ class Informative {
     constructor() {
         this.userService = new UserService();
     }
-
+    //TODO: fazer com que apenas quem criou possa editar ou remover
     insert = async ({
         token,
         title,
@@ -56,7 +56,7 @@ class Informative {
                 token, validProfileTags: allowedProfiles });
             let informative = await db.informative.findByPk(id);
 
-            if (!informative) throw new Error('Invalid informative');
+            if (!informative) throw new Error('Informative not found.');
 
             await db.informative.update({
                 title: title ? title : informative.title,

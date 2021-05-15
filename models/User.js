@@ -43,7 +43,13 @@ module.exports = (sequelize, Sequelize) => {
     })
 
     User.associate = (models) => {
-        User.hasOne(models.profile, { foreignKey: 'id' })
+        User.hasOne(models.profile, { foreignKey: 'id' });
+        User.belongsToMany(models.research, { 
+            foreignKey: 'user_id',
+            through: 'rsrch_members',
+            as: 'research_groups',
+            })
+
     }
 
     return User;

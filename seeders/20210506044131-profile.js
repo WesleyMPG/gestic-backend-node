@@ -35,7 +35,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return await queryInterface.bulkDelete('offers', {
+    return await queryInterface.bulkDelete('profiles', {
       prof_id: ['3a2744c1-fa73-43f1-bceb-a8cee76e5f35',
                 '70039c9e-5c27-41fc-bd5a-ac4f00968887',
                 '285021ca-0510-45cb-ba3c-4f6ad019d0f1',

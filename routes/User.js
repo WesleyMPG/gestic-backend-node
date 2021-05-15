@@ -2,7 +2,6 @@ const { UserService } = require('../services');
 const userService = new UserService();
 const verifyJWT = require('../config/configJWT');
 const express = require('express');
-const { user } = require('.');
 
 const router = express.Router();
 

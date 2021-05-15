@@ -8,8 +8,6 @@ const uuid = require('uuid');
 const db = require('../models')
 
 
-// TODO: verificar se as funcionalidades estão de acordo
-// com o que será preciso
 class User {
 
     _generateHash = async ({ password }) => {
@@ -65,7 +63,7 @@ class User {
                 const { id, profileId } = user;
                 const profile = await db.profile.findByPk(user.profileId);
                 const token = jwt.sign({ id, profileId }, process.env.SECRET, {
-                    expiresIn: 900  // seconds
+                    expiresIn: 9000  // seconds
                 });
                 return { ...user.get(), profileTag: profile.tag, 
                             auth: true, password: '*******', token };
@@ -96,7 +94,7 @@ class User {
                 }
             });
 
-            if (user) throw new Error('Invalid email.')
+            if (user) throw new Error('Email already in use.')
 
             password = await this._generateHash({ password });
             const createdUser = await db.user.create({

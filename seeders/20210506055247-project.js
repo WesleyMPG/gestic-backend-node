@@ -23,7 +23,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return await queryInterface.bulkDelete('offers', {
+    return await queryInterface.bulkDelete('projects', {
       proj_id: ['61e39696-434a-4e2b-89a0-4489751e7834', 'a2c70423-b13b-4850-a7df-ee164a2cd40f']
     })
   }

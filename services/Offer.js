@@ -82,7 +82,6 @@ class Offer {
 
             let offer = await db.offer.findByPk(id);
             if (!offer) throw new Error('Invalid Id');
-
             await db.offer.update(
                 {
                     name: name ? name : offer.name,

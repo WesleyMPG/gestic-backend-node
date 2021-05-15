@@ -17,7 +17,7 @@ describe('Testing informatives routes', () => {
                 email : "coord1@ic.ufal.br",
                 password: "1234"
             });
-        coordToken = 'bearer ' + res.body.token;
+        coordToken = 'Bearer ' + res.body.token;
     })
 
     afterAll(() => {
@@ -44,7 +44,19 @@ describe('Testing informatives routes', () => {
         infoId = res.body.id;
     })
 
-    // rota de update
+    it('Should updata a informative', async () => {
+        const res = await request(app)
+            .put('/informative')
+            .send({
+                id: infoId,
+                title: 'title',
+                content: 'content',
+            })
+            .set('Authorization', coordToken);
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('id', 'title', 'content');
+        expect(res.body.content).toEqual('content');
+    }) 
 
     it('Should get a informative by its id', async () => {
         const res = await request(app)

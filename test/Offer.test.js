@@ -16,7 +16,7 @@ describe('Testing class offer routes', () => {
                 email : "coord1@ic.ufal.br",
                 password: "1234"
             });
-        coordToken = 'bearer ' + res.body.token;
+        coordToken = 'Bearer ' + res.body.token;
     })
 
     afterAll(() => {
@@ -48,7 +48,21 @@ describe('Testing class offer routes', () => {
         offerId = res.body.id;
     })
 
-    // rota de update
+    it('Should update a class offer', async () => {
+        const res = await request(app)
+            .put('/offer')
+            .send({
+                id: offerId,
+                name: 'turma turma',
+                code: 'code code',
+                linkTel: 'link link',
+            })
+            .set('Authorization', coordToken);
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('id', 'name', 'code',
+        'codeClassroom', 'linkMeets', 'linkWpp', 'linkTel');
+        expect(res.body.linkTel).toEqual('link link');
+    })
 
     it('Should get a class offer', async () => {
         const res = await request(app)

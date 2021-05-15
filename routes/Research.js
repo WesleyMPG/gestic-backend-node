@@ -1,8 +1,7 @@
-// TODO: registar no index do modulo
 const { ResearchGroupService } = require('../services');
 const groupService = new ResearchGroupService();
-verifyJWT = require('../config/configJWT');
 const express = require('express');
+const verifyJWT = require('../config/configJWT');
 
 const router = express.Router();
 
@@ -17,18 +16,6 @@ router.get('/', async (req, res) => {
             res.status(500).json({ message: err.message });
     }
 });
-
-router.get('/:id', async (req, res) => {
-    try {
-        const result = await groupService.getById({ ...req.params });
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        (err.code) ?
-            res.status(500).json({ message: "Server Internal Error." }) :
-            res.status(500).json({ message: err.message });
-    }
-})
 
 router.post('/', verifyJWT, async (req, res) => {
     try {
@@ -56,6 +43,44 @@ router.put('/', verifyJWT, async (req, res) => {
     }
 });
 
+router.post('/members', verifyJWT, async (req, res) => {
+    try {
+        const result = await groupService.insertMember({
+            ...req.body, token: req.token });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+router.delete('/members', verifyJWT, async (req, res) => {
+    try {
+        const result = await groupService.deleteMember({
+            ...req.body, token: req.token });
+    res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+router.get('/:id', async (req, res) => {
+    try {
+        const result = await groupService.getById({ ...req.params });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
         const result = await groupService.delete({
@@ -68,3 +93,6 @@ router.delete('/:id', verifyJWT, async (req, res) => {
             res.status(500).json({ message: err.message });
     }
 })
+
+
+module.exports = router;

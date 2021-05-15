@@ -4,12 +4,7 @@ info:
   version: "1.0.0"
   title: "GestIC API"
 host: "localhost:3333"
-components:
-  securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: x-access-token
+
 tags:
 - name: "User"
   description: "Operations related to users"
@@ -21,6 +16,8 @@ tags:
   description: "Operations related to class offers"
 - name: "Informatives"
   description: "Operations related to informatives"
+- name: "Research groups"
+  description: "Operations related to reasearch groups"
 paths:
   /access/login:
     post:
@@ -47,14 +44,6 @@ paths:
       responses:
         "200":
           description: "Successful login. profileTag can be ALUN or MONI or COOR or PROF."
-          headers:
-            Set-Cookie:
-              schema:
-                type: "string"
-                example: 	"x-access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA4OTI5NzE4LTU0ZGEtNDVmNy04YTVjLTQ2ZTg
-                1ZTFjNzc2YyIsInByb2ZpbGVJZCI6IjIxZjMzOTJkLWZiZGMtNGNiMC04ZTNjLTVhMTFkNmMwNjlmMSIsImlhdCI6MTYxOTA1ODc3NSwiZXhw
-                IjoxNjE5MDU5Njc1fQ.OpZp7wcmzolDnIZ12N2FVOQgrIhui6G0Ok6IEitRcUw;
-                Expires=Thu, 22 Apr 2021 02:47:55 GMT; Max-Age=900; Path=/; HttpOnly; Domain=localhos"
           schema:
             type: "object"
             properties:
@@ -66,18 +55,20 @@ paths:
                 format: "uuid"
               name:
                 type: "string"
-              cpf:
-                type: "string"
               email:
                 type: "string"
               password:
                 type: "string"
               status:
                 type: "boolean"
-              auth:
-                type: "boolean"
               profileTag:
                 type: "string"
+              auth:
+                type: "boolean"
+              token:
+                example: 	"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA4OTI5NzE4LTU0ZGEtNDVmNy04YTVjLTQ2ZTg
+                1ZTFjNzc2YyIsInByb2ZpbGVJZCI6IjIxZjMzOTJkLWZiZGMtNGNiMC04ZTNjLTVhMTFkNmMwNjlmMSIsImlhdCI6MTYxOTA1ODc3NSwiZXhw
+                IjoxNjE5MDU5Njc1fQ.OpZp7wcmzolDnIZ12N2FVOQgrIhui6G0Ok6IEitRcUw"
         "500":
           description: "Unsuccessful login"
           schema:
@@ -90,7 +81,7 @@ paths:
       tags:
       - "User"
       summary: "Register a new user"
-      description: "Tag can be: ALUN or MONI or PROF or COOR or TEC. Requires the COOR or TEC token for registration to be done."
+      description: "Regis"
       consumes:
       - "application/json"
       produces:
@@ -156,6 +147,7 @@ paths:
               auth:
                 type: "boolean"
                 example: "false"
+              token: null
   /user:
     put:
       tags:
@@ -168,7 +160,8 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Information required for user update"
+        description: "Any quantity of the following parameters can be sent, but id is required and
+        old_password and new_password must be sent together."
         required: true
         schema:
           type: "object"
@@ -177,12 +170,16 @@ paths:
               type: "string"
               format: "uuid"
             profileId:
-                type: "string"
-                format: "uuid"
+              type: "string"
+              format: "uuid"
             name:
               type: "string"
             status:
               type: "boolean"
+            old_password:
+              type: "string"
+            new_password:
+              type: "string"
       responses:
         "200":
           description: "Successful update"
@@ -502,6 +499,7 @@ paths:
         - in: body
           name: body
           required: true
+          description: "Any quantity of the following parameters can be sent, but id is required."
           schema:
             type: "object"
             properties:
@@ -720,6 +718,7 @@ paths:
         - in: body
           name: body
           required: true
+          description: "Any quantity of the following parameters can be sent, but id is required."
           schema:
             type: "object"
             properties:
@@ -975,6 +974,7 @@ paths:
         - in: body
           name: body
           required: true
+          description: "Any quantity of the following parameters can be sent, but id is required."
           schema:
             type: "object"
             properties:
@@ -1070,4 +1070,318 @@ paths:
             properties:
               message:
                 type: "string"
-
+  /research:
+    get:
+      tags:
+      - "Research groups"
+      summary: "Get a list of all research groups"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Obtained a list of all active research groups"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                description:
+                  type: "string"
+                activities:
+                  type: "string"
+        "500":
+          description: "Could not obtain a list of all active research groups"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    post:
+      tags:
+      - "Research groups"
+      summary: "Insert a research group"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+      responses:
+        "200":
+          description: "Inserted a research group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+        "500":
+          description: "Could not insert a research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    put:
+      tags:
+      - "Research groups"
+      summary: " Update research group information"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: "Any quantity of the following parameters can be sent, but id is required."
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+      responses:
+        "200":
+          description: "Sucessfully updated a research group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+        "500":
+          description: "Could not update a research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /research/:id:
+    get:
+      tags:
+        - "Research groups"
+      summary: "Get research group information"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Obtained a research group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+              members:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                    name:
+                      type: "string"
+                    email:
+                      type: "string"
+        "500":
+          description: "Could not obtain a research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Research groups"
+      summary: "Delete research group"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successfully removed a research group"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+        "500":
+          description: "Could not remove a research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /research/members:
+    post:
+      tags:
+      - "Research groups"
+      summary: "Add a member to research group"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Added a member"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+              members:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                    name:
+                      type: "string"
+                    email:
+                      type: "string"
+        "500":
+          description: "Could not add a member to research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+      - "Research groups"
+      summary: "Remove a member to research group"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Removed a member"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              activities:
+                type: "string"
+              members:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                    name:
+                      type: "string"
+                    email:
+                      type: "string"
+        "500":
+          description: "Could not remove a member from research group"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"

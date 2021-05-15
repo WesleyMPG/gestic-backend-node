@@ -18,7 +18,7 @@ describe('Testing project routes', () => {
                 email : "coord1@ic.ufal.br",
                 password: "1234"
             });
-        coordToken = 'bearer ' + res.body.token;
+        coordToken = 'Bearer ' + res.body.token;
         coordId = res.body.id
     })
 
@@ -37,18 +37,32 @@ describe('Testing project routes', () => {
         const res = await request(app)
             .post('/project')
             .send({
-                name: "turma exemplo4",
-                description: "cc8888",
+                name: "proj exemplo4",
+                description: "uma descrição",
                 userId: coordId
                 })
             .set('Authorization', coordToken);
-            console.log(res.headers);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
                 'userId');
-        projectId = res.body.id;
+        projectId = res.body.id
     })
-    // rota de update
+
+    it('Should update a project', async () => {
+        const res = await request(app)
+            .put('/project')
+            .send({
+                id: projectId,
+                name: 'projeto',
+                description: 'descrição',
+            })
+            .set('Authorization', coordToken);
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('id', 'name', 'description',
+                'uerId');
+        expect(res.body.name).toEqual('projeto');
+        expect(res.body.description).toEqual('descrição');
+    })
 
     it('Should get a project', async () => {
         const res = await request(app)

@@ -1,11 +1,10 @@
-// TODO: registar no index do modulo
-const ResearchGroupRepository = require('../repository/Research');
 const UserService = require('./User');
-const allowedProfiles = require('../permissions.json');
+const allowedProfiles = require('../permissions.json').researchGroup;
+const db = require('../models');
+const uuid = require('uuid');
 
 class ResearchGroup {
     constructor() {
-        this.groupRepository = new ResearchGroupRepository();
         this.userService = new UserService();
     }
 
@@ -13,14 +12,17 @@ class ResearchGroup {
         token,
         name,
         description,
-        members,
-        atctivities,
+        activities,
+        members = undefined,
     }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const group = await this.groupRepository.insertRow({
-                name, description, members, atctivities });
+            const group = await db.research.create({
+                id: uuid.v4(),
+                name,
+                description,
+                activities});
             return group;
         } catch (err) {
             throw err;
@@ -29,7 +31,7 @@ class ResearchGroup {
 
     getGroups = async () => {
         try {
-            const groups = await this.groupRepository.getRows();
+            const groups = await db.research.findAll();
             return groups;
         } catch (err) {
             throw err;
@@ -38,8 +40,15 @@ class ResearchGroup {
 
     getById = async ({ id }) => {
         try {
-            const group = await this.groupRepository.getRow({ id });
-            return selectedProject;
+            const group = await db.research.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
+            if (!group) throw new Error('Research group not found.');
+            return group;
         } catch (err) {
             throw err;
         }
@@ -48,18 +57,25 @@ class ResearchGroup {
     update = async ({
         token,
         id,
-        name,
-        description,
-        members,
-        atctivities,
+        name = undefined,
+        description = undefined,
+        activities = undefined,
     }) => {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const updatedGroup = await this.groupRepository.updateRow(
-                { id }, { name, description, members, atctivities}
-            );
-            return updatedGroup;
+            let group = await db.research.findByPk(id);
+            if (!group) throw new Error('Research group no found.');
+            await db.research.update({
+                name: name ? name : group.name,
+                description: description ? description : group.description,
+                atctivities: activities ? activities : group.activities,
+            },
+            {
+                where: { id }
+            });
+            group = await db.research.findByPk(id);
+            return group;
         } catch (err) {
             throw err;
         }
@@ -69,11 +85,62 @@ class ResearchGroup {
         try {
             await this.userService.verifyUserProfile({
                 token, validProfileTags: allowedProfiles });
-            const deletedGroup = await this.groupRepository.deleteRow({
-                id });
-            return deletedGroup;
+            const deletedGroup = await db.research.findByPk(id);
+            await deletedGroup.destroy();
+            return deletedGroup.get();
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    insertMember = async ({ token, id, userId})  => {
+        try {
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
+            let research = await db.research.findByPk(id);
+            if (!research) throw new Error('Research group no found.');
+
+            const user = await db.user.findByPk(userId);
+            if (!user) throw new Error('User not found.');
+
+            await research.addMember(user, { through: { r_members_id: uuid.v4() }});
+            research = await db.research.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
+            return research;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    deleteMember = async ({token, id, userId}) => {
+        try {
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
+            let research = await db.research.findByPk(id);
+            if (!research) throw new Error('Research not found.');
+
+            const user = await db.user.findByPk(userId);
+            if (!user) throw new Error('User not found.');
+
+            await research.removeMember(user);
+            research = await db.research.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
+            return research;
         } catch (err) {
             throw err;
         }
     }
 }
+
+
+module.exports = ResearchGroup;
