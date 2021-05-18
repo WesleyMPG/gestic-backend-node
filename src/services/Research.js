@@ -1,6 +1,6 @@
 const UserService = require('./User');
-const allowedProfiles = require('../permissions.json').researchGroup;
-const db = require('../models');
+const allowedProfiles = require('../config/permissions.json').researchGroup;
+const db = require('../database/models');
 const uuid = require('uuid');
 
 class ResearchGroup {

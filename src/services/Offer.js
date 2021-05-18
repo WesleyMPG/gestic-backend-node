@@ -1,8 +1,8 @@
 require('dotenv/config');
 
 const UserService = require('./User');
-const db = require('../models')
-const allowedProfiles = require('../permissions.json').offer;
+const db = require('../database/models')
+const allowedProfiles = require('../config/permissions.json').offer;
 const { UUID } = require('sequelize');
 const uuid = require('uuid');
 

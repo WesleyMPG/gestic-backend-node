@@ -1,7 +1,6 @@
 require('dotenv/config');
-const FileRepository = require('../repository/File');
 const UserService = require('./User');
-const allowedProfiles = require('../permissions.json').file;
+const allowedProfiles = require('../config/permissions.json').file;
 
 class File {
     constructor() {

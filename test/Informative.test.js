@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../app');
-const config = require('../config/database');
+const app = require('../src/app');
+const config = require('../src/config/database');
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(config);
 

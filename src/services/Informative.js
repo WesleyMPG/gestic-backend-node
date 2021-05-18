@@ -1,6 +1,6 @@
 const UserService = require("./User")
-const allowedProfiles = require('../permissions.json').project;
-const db = require('../models')
+const allowedProfiles = require('../config/permissions.json').project;
+const db = require('../database/models')
 const uuid = require('uuid');
 
 class Informative {

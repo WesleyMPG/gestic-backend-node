@@ -1,8 +1,0 @@
-{
-    "username": "postgres",
-    "password": "postgres",
-    "database": "GP_APP",
-    "host": "127.0.0.1",
-    "dialect": "postgres",
-    "port": "5433"
-}

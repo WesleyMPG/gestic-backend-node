@@ -2,10 +2,10 @@ require('dotenv/config');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
-const allowedProfiles = require('../permissions.json').user;
+const allowedProfiles = require('../config/permissions.json').user;
 const uuid = require('uuid');
 
-const db = require('../models')
+const db = require('../database/models')
 
 
 class User {
@@ -14,7 +14,6 @@ class User {
         try {
             const salt = await bcrypt.genSalt();
             const passHash = await bcrypt.hash(password, salt);
-            //console.log(passHash + '\n' + password + '\n\n');
             return passHash;
         } catch (err) {
             throw err

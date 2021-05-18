@@ -1,12 +1,14 @@
 require('dotenv/config');
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const jwt = require('jsonwebtoken');
 const swaggerUI = require('swagger-ui-express');
 const yaml = require('yamljs');
-const swaggerDocument = yaml.load('./config/swagger.yaml');
+const swaggerDocument = yaml.load(path.resolve(
+    __dirname, 'config/swagger.yaml'));
 
 const routes = require('./routes/index');
 
