@@ -33,11 +33,6 @@ module.exports = (sequelize, Sequelize) => {
             field: 'user_status',
             defaultValue: true
         },
-        change_psswd: {
-            allowNull: false,
-            type: Sequelize.BOOLEAN,
-            defaultValue: false,
-        }
     }, {
         timestamps: true
     })

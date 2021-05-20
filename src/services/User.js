@@ -158,7 +158,6 @@ class User {
         name = undefined,
         status = undefined,
         profileId = undefined,
-        change_psswd = undefined,
         old_password = undefined,
         new_password = undefined,
     }) => {
@@ -175,7 +174,6 @@ class User {
                 name: name ? name : user.name,
                 status: status ? status : user.status,
                 profileId: profileId ? profileId : user.profileId,
-                change_psswd: change_psswd ? change_psswd : user.change_psswd,
             }, {
                 where: {
                     id

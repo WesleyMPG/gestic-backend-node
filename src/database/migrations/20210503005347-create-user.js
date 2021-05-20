@@ -34,10 +34,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
-      change_psswd: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

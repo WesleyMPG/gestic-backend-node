@@ -10,7 +10,6 @@ module.exports = {
         user_email: 'coord1@ic.ufal.br',
         user_password: '$2b$10$7NoIELKFMijldCzQgfEQq./fMogwKLTHWSBVxNGtF0965kNMtRwem', // 1234
         user_status: true,
-        change_psswd: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -21,7 +20,6 @@ module.exports = {
         user_email: 'coord2@ic.ufal.br',
         user_password: '$2b$10$7NoIELKFMijldCzQgfEQq./fMogwKLTHWSBVxNGtF0965kNMtRwem', // 1234
         user_status: true,
-        change_psswd: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -32,7 +30,6 @@ module.exports = {
         user_email: 'aluno1@ic.ufal.br',
         user_password: '$2b$10$7NoIELKFMijldCzQgfEQq./fMogwKLTHWSBVxNGtF0965kNMtRwem', // 1234
         user_status: true,
-        change_psswd: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

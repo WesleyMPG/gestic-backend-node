@@ -13,7 +13,6 @@ class ResearchGroup {
         name,
         description,
         activities,
-        members = undefined,
     }) => {
         try {
             await this.userService.verifyUserProfile({
