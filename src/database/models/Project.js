@@ -23,12 +23,22 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             field: 'proj_description'
         },
+        type: {
+            allowNull: false,
+            type: Sequelize.STRING,
+            field: 'proj_type',
+        },
     }, {
         timestamps: true
     })
 
     Project.associate = (models) => {
         Project.hasOne(models.user, { foreignKey: 'id' })
+        Project.belongsToMany(models.user, {
+            foreignKey: 'proj_id',
+            through: 'proj_members',
+            as: 'members',
+        })
     }
 
     return Project;

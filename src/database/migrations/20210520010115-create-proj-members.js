@@ -2,12 +2,12 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('rsrch_members', {
-        rsrch_id: {
+    await queryInterface.createTable('proj_members', {
+        proj_id: {
             allowNull: false,
             primaryKey: true,
             type: Sequelize.UUID,
-            references: { model: 'researches', key: 'rsrch_id'},
+            references: { model: 'projects', key: 'proj_id'},
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         },
@@ -31,6 +31,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    queryInterface.dropTable('rsrch_members');
+    queryInterface.dropTable('proj_members');
   }
 };
+

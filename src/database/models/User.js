@@ -34,7 +34,12 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: true
         },
     }, {
-        timestamps: true
+        timestamps: true,
+        scopes: {
+            withoutPassword: {
+                attributes: { exclude: ['password'] },
+            }
+}
     })
 
     User.associate = (models) => {
@@ -43,8 +48,12 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'user_id',
             through: 'rsrch_members',
             as: 'research_groups',
-            })
-
+            });
+        User.belongsToMany(models.project, {
+            foreignKey: 'user_id',
+            through: 'proj_members',
+            as: 'projects'
+        });
     }
 
     return User;

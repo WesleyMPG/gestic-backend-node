@@ -12,9 +12,10 @@ class Project {
 
     insert = async ({
         token,
+        userId,
         name,
         description,
-        userId
+        type,
     }) => {
         try {
             await this.userService.verifyUserProfile({
@@ -24,9 +25,10 @@ class Project {
             if (!user) throw new Error('Invalid user.');
             const project = await db.project.create({
                 id: uuid.v4(),
+                userId,
                 name,
                 description,
-                userId
+                type,
             });
             return project.get();
         } catch (err) {
@@ -34,9 +36,16 @@ class Project {
         }
     }
 
-    getProjects = async () => {
+    getProjects = async ({ type = undefined }) => {
         try {
-            const projects = await db.project.findAll();
+            let projects;
+            if (type) {
+                projects = await db.project.findAll({
+                    where: { type }
+                })
+            } else {
+                projects = await db.project.findAll();
+            }
             return projects;
         } catch (err) {
             throw err;
@@ -47,7 +56,13 @@ class Project {
         id
     }) => {
         try {
-            const selectedProject = await db.project.findByPk(id);
+            const selectedProject = await db.project.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
             if (!selectedProject) throw new Error('Project not found.');
             return selectedProject.get();
         } catch (err) {
@@ -58,9 +73,10 @@ class Project {
     update = async ({
         token,
         id,
+        userId = undefined,
         name = undefined,
         description = undefined,
-        userId = undefined,
+        type = undefined,
     }) => {
         try {
             await this.userService.verifyUserProfile({
@@ -71,9 +87,10 @@ class Project {
 
             await db.project.update(
                 {
+                    userId: userId ? userId : project.userId,
                     name: name ? name : project.name,
                     description: description ? description : project.description,
-                    userId: userId ? userId : project.userId,
+                    type: type ? type : project.type,
                 },
                 {
                     where: {
@@ -95,6 +112,54 @@ class Project {
             const deletedProject = await db.project.findByPk(id);
             await deletedProject.destroy();
             return deletedProject.get();
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    insertMember = async ({ token, id, userId})  => {
+        try {
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
+            let project = await db.project.findByPk(id);
+            if (!project) throw new Error('Research group no found.');
+
+            const user = await db.user.findByPk(userId);
+            if (!user) throw new Error('User not found.');
+
+            await project.addMember(user);
+            project = await db.project.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
+            return project;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    deleteMember = async ({token, id, userId}) => {
+        try {
+            await this.userService.verifyUserProfile({
+                token, validProfileTags: allowedProfiles });
+            let project = await db.project.findByPk(id);
+            if (!project) throw new Error('Research not found.');
+
+            const user = await db.user.findByPk(userId);
+            if (!user) throw new Error('User not found.');
+
+            await project.removeMember(user);
+            project = await db.project.findByPk(id, {
+                include: { 
+                    association: 'members',
+                    attributes: ['id', 'name', 'email'],
+                    through: { attributes: [] },
+                }
+            });
+            return project;
         } catch (err) {
             throw err;
         }

@@ -116,13 +116,21 @@ class User {
 
     getById = async ({
         token,
-        id
+        idInToken,
+        id,
     }) => {
         try {
-            const user = await db.user.findByPk(id);
+            const isAdminProfile = await this.validateUserProfile({
+                token, validProfileTags: allowedProfiles });
+            const isOwner = (id === idInToken);
+            if (!isAdminProfile && !isOwner) {
+                    throw new Error('Invalid id or profile.')
+            }
+            if (!id) id = idInToken;
+            const user = await db.user.scope('withoutPassword').findByPk(id);
             const profile = await db.profile.findByPk(user.profileId);
             if (!user) throw new Error('User not found.');
-            return { ...user.get(), profileTag: profile.tag, password: '*******' };
+            return { ...user.get(), profileTag: profile.tag };
         } catch (err) {
             throw err;
         }
@@ -138,14 +146,14 @@ class User {
                 token, validProfileTags: allowedProfiles });
             let users;
             if (status === undefined) {
-                users = await db.user.findAll();
+                users = await db.user.scope('withoutPassword').findAll();
             }
             else {
-                users = await db.user.findAll({ 
+                users = await db.user.scope('withoutPassword').findAll({
                     where: { status }
                 });
             }
-            return users.map(user => ({ ...user, password: '*******' }));
+            return users;
         } catch (err) {
             throw err;
         }

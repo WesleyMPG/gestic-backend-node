@@ -28,7 +28,7 @@ describe('Testing project routes', () => {
 
     it('Should get all projects', async () => {
         const res = await request(app)
-            .get('/project');
+            .get('/project/all');
         expect(res.ok).toBeTruthy();
         expect(res.body instanceof Array).toBe(true);
     })
@@ -37,14 +37,15 @@ describe('Testing project routes', () => {
         const res = await request(app)
             .post('/project')
             .send({
+                userId: coordId,
                 name: "proj exemplo4",
                 description: "uma descrição",
-                userId: coordId
+                type: 'PIBIT',
                 })
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
-                'userId');
+                'userId', 'type');
         projectId = res.body.id
     })
 
@@ -55,13 +56,15 @@ describe('Testing project routes', () => {
                 id: projectId,
                 name: 'projeto',
                 description: 'descrição',
+                type: 'PIBIC',
             })
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
-                'uerId');
+                'uerId', 'type');
         expect(res.body.name).toEqual('projeto');
         expect(res.body.description).toEqual('descrição');
+        expect(res.body.type).toEqual('PIBIC');
     })
 
     it('Should get a project', async () => {
@@ -69,8 +72,34 @@ describe('Testing project routes', () => {
             .get('/project/' + projectId);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
-                'userId');
+                'userId', 'type', 'members');
         expect(res.body.id).toEqual(projectId);
+    })
+
+    it('Should add a member', async () => {
+        const res = await request(app)
+            .post('/project/members')
+            .set('Authorization', coordToken)
+            .send({
+                id: projectId,
+                userId: coordId,
+            });
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('members');
+        expect(res.body.members[0].id).toEqual(coordId);
+    })
+
+    it('Should delete a member', async () => {
+        const res = await request(app)
+            .delete('/project/members')
+            .set('Authorization', coordToken)
+            .send({
+                id: projectId,
+                userId: coordId,
+            });
+        expect(res.ok).toBeTruthy();
+        expect(res.body).toHaveProperty('members');
+        expect(res.body.members).toEqual([]);
     })
 
     it('Should delete a project', async () => {

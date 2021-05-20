@@ -102,7 +102,7 @@ class ResearchGroup {
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
 
-            await research.addMember(user, { through: { r_members_id: uuid.v4() }});
+            await research.addMember(user);
             research = await db.research.findByPk(id, {
                 include: { 
                     association: 'members',

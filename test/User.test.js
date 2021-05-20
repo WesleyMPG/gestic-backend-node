@@ -119,8 +119,7 @@ describe('Testing user routes',  () => {
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'profileId',
-        'name', 'email', 'password', 'status', 'change_psswd',
-        'profileTag');
+        'name', 'email', 'status', 'profileTag');
     })
 
 })

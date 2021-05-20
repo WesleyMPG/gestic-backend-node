@@ -247,7 +247,48 @@ paths:
             properties:
               message:
                 type: "string"
-  /user/:status?:
+  /user/id?:
+    get:
+      tags:
+      - "User"
+      summary: "Get a user. If the id is specified returs the user which owns it. Else
+      returns user that made the request"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: false
+          type: string
+      responses:
+        "200":
+          description: "Returned the user"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                profileId:
+                  type: "string"
+                  format: "uuid"
+                name:
+                  type: "string"
+                email:
+                  type: "string"
+                status:
+                  type: "boolean"
+                  example: false
+        "500":
+          description: "Could not return the user"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /user/all/:status?:
     get:
       tags:
       - "User"
@@ -276,8 +317,6 @@ paths:
                 name:
                   type: "string"
                 email:
-                  type: "string"
-                password:
                   type: "string"
                 status:
                   type: "boolean"
@@ -607,6 +646,124 @@ paths:
             properties:
               message:
                 type: "string"
+  /project/members:
+    post:
+      tags:
+        - "Project"
+      summary: "Add a member to project"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Added a member"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              type:
+                type: "string"
+              members:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                    name:
+                      type: "string"
+                    email:
+                      type: "string"
+        "500":
+          description: "Could not add a member to project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Project"
+      summary: "Remove a member from project"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "Removed a member"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+              userId:
+                type: "string"
+                format: "uuid"
+              name:
+                type: "string"
+              description:
+                type: "string"
+              type:
+                type: "string"
+              members:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                    name:
+                      type: "string"
+                    email:
+                      type: "string"
+        "500":
+          description: "Could not remove a member from project"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+
   /offer:
     get:
       tags:
@@ -1274,10 +1431,11 @@ paths:
             properties:
               message:
                 type: "string"
+
   /research/members:
     post:
       tags:
-      - "Research groups"
+        - "Research groups"
       summary: "Add a member to research group"
       produces:
       - "application/json"
@@ -1332,8 +1490,8 @@ paths:
                 type: "string"
     delete:
       tags:
-      - "Research groups"
-      summary: "Remove a member to research group"
+        - "Research groups"
+      summary: "Remove a member from research group"
       produces:
       - "application/json"
       consumes:

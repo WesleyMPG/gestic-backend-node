@@ -18,9 +18,10 @@ router.post('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/',  async (req, res) => {
+router.put('/', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.getProjects();
+        const result = await projectService.update({
+            ...req.body, token: req.token });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -30,10 +31,36 @@ router.get('/',  async (req, res) => {
     }
 })
 
-router.put('/', verifyJWT, async (req, res) => {
+router.post('/members', verifyJWT, async (req, res) => {
     try {
-        const result = await projectService.update({
+        const result = await projectService.insertMember({
             ...req.body, token: req.token });
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+router.delete('/members', verifyJWT, async (req, res) => {
+    try {
+        const result = await projectService.deleteMember({
+            ...req.body, token: req.token });
+    res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
+router.get('/all/:type?',  async (req, res) => {
+    try {
+        const result = await projectService.getProjects({
+            ...req.params });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
