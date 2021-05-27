@@ -1,5 +1,5 @@
 const UserService = require("./User")
-const allowedProfiles = require('../config/permissions.json').project;
+const allwdProf = require('../config/permissions.json').informative;
 const db = require('../database/models')
 const uuid = require('uuid');
 
@@ -10,14 +10,16 @@ class Informative {
     //TODO: fazer com que apenas quem criou possa editar ou remover
     insert = async ({
         token,
+        ownerId,
         title,
         content,
     }) => {
         try {
             await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
+                token, validProfileTags: allwdProf.create });
             const info = await db.informative.create({
                 id: uuid.v4(),
+                owner: ownerId,
                 title,
                 content,
             });
@@ -48,15 +50,18 @@ class Informative {
     update = async ({ 
         token,
         id,
+        userId,
         title = undefined,
         content = undefined,
     }) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
             let informative = await db.informative.findByPk(id);
-
             if (!informative) throw new Error('Informative not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (userId !== informative.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
 
             await db.informative.update({
                 title: title ? title : informative.title,
@@ -71,13 +76,17 @@ class Informative {
         }
     }
 
-    delete = async ({ token, id }) => {
+    delete = async ({ token, id, userId }) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
-            const deletedInformative = await db.informative.findByPk(id);
-            deletedInformative.destroy();
-            return deletedInformative;
+            const informative = await db.informative.findByPk(id);
+            if (!informative) throw new Error('Informative not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (userId !== informative.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
+            informative.destroy();
+            return informative;
         } catch (err) {
             throw (err);
         }

@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/', verifyJWT, async (req, res) => {
     try {
         const result = await projectService.insert({
-            ...req.body, token: req.token });
+            ...req.body, token: req.token, ownerId: req.userId});
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -21,7 +21,7 @@ router.post('/', verifyJWT, async (req, res) => {
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await projectService.update({
-            ...req.body, token: req.token });
+            ...req.body, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -34,7 +34,7 @@ router.put('/', verifyJWT, async (req, res) => {
 router.post('/members', verifyJWT, async (req, res) => {
     try {
         const result = await projectService.insertMember({
-            ...req.body, token: req.token });
+            ...req.body, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -47,7 +47,7 @@ router.post('/members', verifyJWT, async (req, res) => {
 router.delete('/members', verifyJWT, async (req, res) => {
     try {
         const result = await projectService.deleteMember({
-            ...req.body, token: req.token });
+            ...req.body, token: req.token, ownerId: req.userId });
     res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -73,7 +73,7 @@ router.get('/all/:type?',  async (req, res) => {
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
         const result = await projectService.delete({
-            ...req.params, token: req.token });
+            ...req.params, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

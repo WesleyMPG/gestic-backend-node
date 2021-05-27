@@ -1,5 +1,5 @@
 const UserService = require('./User');
-const allowedProfiles = require('../config/permissions.json').researchGroup;
+const allwdProf = require('../config/permissions.json').researchGroup;
 const db = require('../database/models');
 const uuid = require('uuid');
 
@@ -10,15 +10,17 @@ class ResearchGroup {
 
     insert = async ({
         token,
+        ownerId,
         name,
         description,
         activities,
     }) => {
         try {
             await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
+                token, validProfileTags: allwdProf.create });
             const group = await db.research.create({
                 id: uuid.v4(),
+                owner: ownerId,
                 name,
                 description,
                 activities});
@@ -56,48 +58,63 @@ class ResearchGroup {
     update = async ({
         token,
         id,
+        ownerId,
+        newOwner = undefined,
         name = undefined,
         description = undefined,
         activities = undefined,
     }) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
-            let group = await db.research.findByPk(id);
-            if (!group) throw new Error('Research group no found.');
+            let research = await db.research.findByPk(id);
+            if (!research) throw new Error('Research not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (ownerId !== research.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
+
             await db.research.update({
-                name: name ? name : group.name,
-                description: description ? description : group.description,
-                atctivities: activities ? activities : group.activities,
+                owner: newOwner ? newOwner : ownerId,
+                name: name ? name : research.name,
+                description: description ? description : research.description,
+                atctivities: activities ? activities : research.activities,
             },
             {
                 where: { id }
             });
-            group = await db.research.findByPk(id);
-            return group;
+            research = await db.research.findByPk(id);
+            return research;
         } catch (err) {
             throw err;
         }
     }
 
-    delete = async ({ token, id }) => {
+    delete = async ({ token, id, ownerId }) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
-            const deletedGroup = await db.research.findByPk(id);
-            await deletedGroup.destroy();
-            return deletedGroup.get();
+            const research = await db.research.findByPk(id);
+            if (!research) throw new Error('Research not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (ownerId !== research.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
+
+            await research.destroy();
+            return research.get();
         } catch (err) {
             throw err;
         }
     }
 
-    insertMember = async ({ token, id, userId})  => {
+    insertMember = async ({ token, id, userId, ownerId})  => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
             let research = await db.research.findByPk(id);
-            if (!research) throw new Error('Research group no found.');
+            if (!research) throw new Error('Research not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (ownerId !== research.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
@@ -116,12 +133,15 @@ class ResearchGroup {
         }
     }
 
-    deleteMember = async ({token, id, userId}) => {
+    deleteMember = async ({token, id, userId, ownerId}) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
             let research = await db.research.findByPk(id);
             if (!research) throw new Error('Research not found.');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (ownerId !== research.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');

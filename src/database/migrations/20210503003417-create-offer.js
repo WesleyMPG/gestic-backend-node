@@ -7,6 +7,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
+      owner_id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.UUID,
+        references: { model: 'users', key: 'user_id'},
+        onUpdate: 'CASCADE'
+      },
       offer_name: {
         allowNull: false,
         type: Sequelize.STRING

@@ -5,6 +5,7 @@ module.exports = {
     return await queryInterface.bulkInsert('offers', [
       {
         offer_id: '16d4ecd9-4441-4998-9788-d81f7e613df7',
+        owner_id: 'f9584d5c-b11e-4148-8e12-e124782f9b9c',
         offer_name: 'Circuitos Elétricos',
         offer_code: 'ECOM028',
         offer_code_classroom: 'm33NS1n3',
@@ -17,6 +18,7 @@ module.exports = {
       },
       {
         offer_id: '0527207b-6070-4743-af4c-2b0b052da159',
+        owner_id: 'f9584d5c-b11e-4148-8e12-e124782f9b9c',
         offer_name: 'Projeto e Análise de Algoritmos',
         offer_code: 'ECOM027',
         offer_code_classroom: 'n40me3NS1n3',

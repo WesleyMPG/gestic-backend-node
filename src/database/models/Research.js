@@ -7,6 +7,11 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.UUID,
             field: 'rsrch_id'
         },
+        owner: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            field: 'owner_id'
+        },
         name: {
             allowNull: false,
             type: Sequelize.STRING,
@@ -28,6 +33,10 @@ module.exports = (sequelize, Sequelize) => {
     });
 
     Research.associate = (models) => {
+        Research.belongsTo(models.user, { 
+            foreignKey: 'owner',
+            as: 'ownerInfo',
+        });
         Research.belongsToMany(models.user, { 
             foreignKey: 'rsrch_id',
             through: 'rsrch_members',

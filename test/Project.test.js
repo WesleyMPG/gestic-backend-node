@@ -37,15 +37,15 @@ describe('Testing project routes', () => {
         const res = await request(app)
             .post('/project')
             .send({
-                userId: coordId,
                 name: "proj exemplo4",
                 description: "uma descrição",
                 type: 'PIBIT',
                 })
             .set('Authorization', coordToken);
+        console.log(res.body)
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
-                'userId', 'type');
+                'owner', 'type');
         projectId = res.body.id
     })
 
@@ -72,7 +72,7 @@ describe('Testing project routes', () => {
             .get('/project/' + projectId);
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'name', 'description',
-                'userId', 'type', 'members');
+                'owner', 'type', 'members');
         expect(res.body.id).toEqual(projectId);
     })
 

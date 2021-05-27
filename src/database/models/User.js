@@ -39,11 +39,19 @@ module.exports = (sequelize, Sequelize) => {
             withoutPassword: {
                 attributes: { exclude: ['password'] },
             }
-}
+        }
     })
 
     User.associate = (models) => {
         User.hasOne(models.profile, { foreignKey: 'id' });
+        User.hasMany(models.informative, { 
+            foreignKey: 'owner',
+            as: 'informatives',
+        })
+        User.hasMany(models.offer, { 
+            foreignKey: 'owner',
+            as: 'offers',
+        })
         User.belongsToMany(models.research, { 
             foreignKey: 'user_id',
             through: 'rsrch_members',

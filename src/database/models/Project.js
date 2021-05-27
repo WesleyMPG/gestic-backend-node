@@ -8,10 +8,10 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: Sequelize.UUIDV4,
             field: 'proj_id'
         },
-        userId: {
+        owner: {
             type: Sequelize.UUID,
             allowNull: false,
-            field: 'proj_user'
+            field: 'owner_id'
         },
         name: {
             allowNull: false,
@@ -33,7 +33,10 @@ module.exports = (sequelize, Sequelize) => {
     })
 
     Project.associate = (models) => {
-        Project.hasOne(models.user, { foreignKey: 'id' })
+        Project.belongsTo(models.user, { 
+            foreignKey: 'owner',
+            as: 'ownerInfo',
+        });
         Project.belongsToMany(models.user, {
             foreignKey: 'proj_id',
             through: 'proj_members',

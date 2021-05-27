@@ -2,7 +2,7 @@ require('dotenv/config');
 
 const UserService = require('./User');
 const db = require('../database/models')
-const allowedProfiles = require('../config/permissions.json').offer;
+const allwdProf = require('../config/permissions.json').offer;
 const { UUID } = require('sequelize');
 const uuid = require('uuid');
 
@@ -13,6 +13,7 @@ class Offer {
 
     insert = async ({
         token,
+        ownerId,
         name,
         code,
         codeClassroom,
@@ -23,10 +24,11 @@ class Offer {
     }) => {
         try {
             await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
+                token, validProfileTags: allwdProf.create });
 
             const insertedOffer = await db.offer.create({
                 id: uuid.v4(),
+                owner: ownerId,
                 name,
                 code,
                 codeClassroom,
@@ -66,6 +68,7 @@ class Offer {
     update = async ({
         token,
         id,
+        userId,
         name = undefined,
         code = undefined,
         codeClassroom = undefined,
@@ -76,12 +79,14 @@ class Offer {
 
     }) => {
         try {
-
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
-
             let offer = await db.offer.findByPk(id);
             if (!offer) throw new Error('Invalid Id');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (userId !== offer.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
+
             await db.offer.update(
                 {
                     name: name ? name : offer.name,
@@ -104,13 +109,18 @@ class Offer {
 
     deleteById = async ({
         token,
-        id
+        id,
+        userId
     }) => {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
-
             const offer = await db.offer.findByPk(id);
+            if (!offer) throw new Error('Invalid Id');
+
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            if (userId !== offer.owner && !isAdmin) 
+                throw new Error('You have no permission to do this.');
+
             await offer.destroy()
             return offer.get();
         } catch (err) {
@@ -123,7 +133,7 @@ class Offer {
     ) => {
         try {
             await this.userService.verifyUserProfile({
-                token, validProfileTags: allowedProfiles });
+                token, validProfileTags: allwdProf.deleteAll });
 
             const offers = await db.offer.findAll();
             for (let i = 0; i < offers.length; ++i) {

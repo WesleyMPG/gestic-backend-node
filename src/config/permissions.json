@@ -1,8 +1,21 @@
 {
-  "researchGroup": ["COOR", "TEC", "PROF"],
-  "project": ["COOR", "TEC", "PROF"],
-  "informative": ["COOR", "TEC", "PROF"],
-  "offer": ["COOR", "TEC", "PROF"],
+  "researchGroup": {
+    "create": ["COOR", "TEC", "PROF"],
+    "edit": ["TEC"]
+  },
+  "project": {
+    "create": ["COOR", "TEC", "PROF"],
+    "edit": ["TEC"]
+  },
+  "informative": {
+    "create": ["COOR", "TEC", "PROF"],
+    "edit": ["TEC", "COORD"]
+  },
+  "offer": {
+    "create": ["COOR", "TEC", "PROF"],
+    "edit": ["TEC"],
+    "deleteAll": ["TEC"]
+  },
   "file": ["COOR", "TEC", "PROF"],
   "user": ["TEC"]
 }

@@ -34,7 +34,7 @@ describe('Testing research group routes', () => {
         expect(res.body instanceof Array).toBe(true);
     })
 
-    it('Should create a project', async () => {
+    it('Should create a research group', async () => {
         const res = await request(app)
             .post('/research')
             .send({
@@ -49,7 +49,7 @@ describe('Testing research group routes', () => {
         researchId = res.body.id
     })
 
-    it('Should update a class group info', async () => {
+    it('Should update a research group info', async () => {
         const res = await request(app)
             .put('/research')
             .send({
@@ -65,7 +65,7 @@ describe('Testing research group routes', () => {
         expect(res.body.description).toEqual('algo');
     })
 
-    it('Should get a class group', async () => {
+    it('Should get a research group', async () => {
         const res = await request(app)
             .get('/research/' + researchId);
         expect(res.ok).toBeTruthy();
@@ -100,7 +100,7 @@ describe('Testing research group routes', () => {
         expect(res.body.members).toEqual([]);
     })
 
-    it('Should delete a class group', async () => {
+    it('Should delete a research group', async () => {
         const res = await request(app)
             .delete('/research/' + researchId)
             .set('Authorization', coordToken);

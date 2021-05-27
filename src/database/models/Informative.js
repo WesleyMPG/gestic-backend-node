@@ -8,6 +8,12 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: Sequelize.UUIDV4,
             field: 'info_id'
         },
+        owner: {
+            allowNull: false,
+            primaryKey: true,
+            type: Sequelize.UUID,
+            field: 'owner_id'
+        },
         title: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -20,7 +26,14 @@ module.exports = (sequelize, Sequelize) => {
         },
     }, {
         timestamps: true
-    })
+    });
+
+    Informative.associate = (models) => {
+        Informative.belongsTo(models.user, { 
+            foreignKey: 'owner',
+            as: 'ownerInfo',
+        });
+    };
 
     return Informative;
 }

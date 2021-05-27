@@ -35,7 +35,7 @@ router.post('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.insert({
             ...req.body, token: req.token,
-            userId: req.userId
+            ownerId: req.userId
         });
         res.status(200).json(result);
     } catch (err) {
@@ -49,7 +49,7 @@ router.post('/', verifyJWT, async (req, res) => {
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.update({
-            ...req.body, token: req.token });
+            ...req.body, token: req.token, userId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

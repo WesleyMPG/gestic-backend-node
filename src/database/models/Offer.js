@@ -8,6 +8,12 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: Sequelize.UUIDV4,
             field: 'offer_id'
         },
+        owner: {
+            allowNull: false,
+            primaryKey: true,
+            type: Sequelize.UUID,
+            field: 'owner_id'
+        },
         name: {
             allowNull: false,
             type: Sequelize.STRING,
@@ -50,7 +56,14 @@ module.exports = (sequelize, Sequelize) => {
         },
     }, {
         timestamps: true
-    })
+    });
+
+    Offer.associate = (models) => {
+        Offer.belongsTo(models.user, { 
+            foreignKey: 'owner',
+            as: 'ownerInfo',
+        });
+    };
 
     return Offer;
 }

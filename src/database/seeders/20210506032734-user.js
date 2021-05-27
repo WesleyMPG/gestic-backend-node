@@ -25,7 +25,7 @@ module.exports = {
       },
       {
         user_id: 'cb1e0a9e-a9d7-447e-8429-0a0328dcf12c',
-        prof_id: '285021ca-0510-45cb-ba3c-4f6ad019d0f1',
+        prof_id: '3a2744c1-fa73-43f1-bceb-a8cee76e5f35',
         user_name: 'aluno1',
         user_email: 'aluno1@ic.ufal.br',
         user_password: '$2b$10$7NoIELKFMijldCzQgfEQq./fMogwKLTHWSBVxNGtF0965kNMtRwem', // 1234
