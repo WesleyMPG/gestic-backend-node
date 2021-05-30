@@ -7,7 +7,7 @@ class Informative {
     constructor() {
         this.userService = new UserService();
     }
-    //TODO: fazer com que apenas quem criou possa editar ou remover
+
     insert = async ({
         token,
         ownerId,

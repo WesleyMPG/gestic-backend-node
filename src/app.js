@@ -27,6 +27,7 @@ app.use('/project', routes.project);
 app.use('/offer', routes.offer);
 app.use('/informative', routes.informative);
 app.use('/research', routes.research);
+app.use('/event', routes.event);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.get('/', verifyJWT, (req, res) => {

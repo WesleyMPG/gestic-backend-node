@@ -1,21 +1,24 @@
 {
   "researchGroup": {
     "create": ["COOR", "TEC", "PROF"],
-    "edit": ["TEC"]
+    "edit": ["TEC", "COOR"]
   },
   "project": {
     "create": ["COOR", "TEC", "PROF"],
-    "edit": ["TEC"]
+    "edit": ["TEC", "COOR"]
   },
   "informative": {
     "create": ["COOR", "TEC", "PROF"],
-    "edit": ["TEC", "COORD"]
+    "edit": ["TEC", "COOR"]
   },
   "offer": {
     "create": ["COOR", "TEC", "PROF"],
-    "edit": ["TEC"],
-    "deleteAll": ["TEC"]
+    "edit": ["TEC", "COOR"],
+    "deleteAll": ["TEC", "COOR"]
   },
-  "file": ["COOR", "TEC", "PROF"],
-  "user": ["TEC"]
+  "user": ["TEC", "COOR"],
+  "event": {
+    "create": ["COOR", "TEC"],
+    "edit": ["COOR", "TEC"]
+  }
 }

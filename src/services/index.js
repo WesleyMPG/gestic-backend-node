@@ -3,6 +3,7 @@ const ProjectService = require('./Project');
 const OfferService = require('./Offer');
 const InformativeService = require('./Informative');
 const ResearchGroupService = require('./Research');
+const EventService = require('./Event');
 
 module.exports = {
     UserService,
@@ -10,4 +11,5 @@ module.exports = {
     OfferService,
     InformativeService,
     ResearchGroupService,
+    EventService,
 }

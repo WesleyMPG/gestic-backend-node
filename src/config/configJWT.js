@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 
 function verifyJWT(req, res, next) {
     const auth = req.headers.authorization;
+    if (!auth) return res.status(401).json({
+      auth: false, message: 'No token provided.' });
     const [ prefix, token ] = auth.split(' ');
     if (prefix !== 'Bearer') return res.status(401).json({ 
       auth: false, message:'Invalid token format.' });
 
-    if (!token) return res.status(401).json({
-      auth: false, message: 'No token provided.' });
-
+    
     jwt.verify(token, process.env.SECRET, function(err, decoded) {
       if (err instanceof jwt.TokenExpiredError) {
         return res.status(500).json({

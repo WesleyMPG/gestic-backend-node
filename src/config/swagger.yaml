@@ -18,6 +18,9 @@ tags:
   description: "Operations related to informatives"
 - name: "Research groups"
   description: "Operations related to reasearch groups"
+- name: "Events"
+  description: "Operations related to active events"
+
 paths:
   /access/login:
     post:
@@ -1612,3 +1615,162 @@ paths:
             properties:
               message:
                 type: "string"
+
+  /event:
+    get:
+      tags:
+      - "Events"
+      summary: "Get a list of all events"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Obtained a list of all events"
+          schema:
+            type: "array"
+            produces: "application/json"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  format: "uuid"
+                start:
+                  type: "string"
+                  format: "date-time"
+                end:
+                  type: "string"
+                  format: "date-time"
+                title:
+                  type: "string"
+                description:
+                  type: "string"
+        "500":
+          description: "Could not obtain a list of all events"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    post:
+      tags:
+      - "Events"
+      summary: "Insert a event"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/components/schemas/Event"
+      responses:
+        "200":
+          description: "Inserted a class offer"
+          schema:
+            $ref: "#/components/schemas/Event"
+        "500":
+          description: "Could not insert a class offer"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    put:
+      tags:
+      - "Events"
+      summary: " Update class offer information"
+      produces:
+      - "application/json"
+      consumes:
+      - "application/json"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: "Any quantity of the following parameters can be sent, but id is required."
+          schema:
+            $ref: "#/components/schemas/Event"
+      responses:
+        "200":
+          description: "Sucessfully updated a class offer"
+          schema:
+            $ref: "#/components/schemas/Event"
+        "500":
+          description: "Could not update a class offer"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+  /event/:id:
+    get:
+      tags:
+        - "Events"
+      summary: "Get class offer information"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Obtained a class offer"
+          schema:
+            $ref: "#/components/schemas/Event"
+        "500":
+          description: "Could not obtain a class offer"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+    delete:
+      tags:
+        - "Events"
+      summary: "Delete class offer"
+      produces:
+      - "application/json"
+      parameters:
+        - in: param
+          name: id
+          required: true
+          type: string
+          format: "uuid"
+      responses:
+        "200":
+          description: "Successfully removed a class offer"
+          schema:
+            $ref: "#/components/schemas/Event"
+        "500":
+          description: "Could not remove a class offer"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+
+
+components:
+  schemas:
+    Event:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        start:
+          type: "string"
+          format: "date-time"
+        end:
+          type: "string"
+          format: "date-time"
+        title:
+          type: "string"
+        description:
+          type: "string"

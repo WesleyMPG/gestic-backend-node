@@ -1,15 +1,17 @@
-const userRoutes = require('./User');
-const projectRoutes = require('./Project');
-const offerRoutes = require('./Offer');
-const accessRoutes = require('./access');
-const informativeRoutes = require('./Informative.js');
-const researchRoutes = require('./Research');
+const user = require('./User');
+const project = require('./Project');
+const offer = require('./Offer');
+const access = require('./access');
+const informative = require('./Informative.js');
+const research = require('./Research');
+const event = require('./Event');
 
 module.exports = {
-    user: userRoutes,
-    project: projectRoutes,
-    offer: offerRoutes,
-    access: accessRoutes,
-    informative: informativeRoutes,
-    research: researchRoutes,
+    user,
+    project,
+    offer,
+    access,
+    informative,
+    research,
+    event,
 };
