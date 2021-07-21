@@ -1,22 +1,16 @@
-const UserService = require("./User")
-const allwdProf = require('../config/permissions.json').informative;
+const UserService = require("./User");
+const Service = require('./Service');
 const db = require('../database/models')
 const uuid = require('uuid');
 
-class Informative {
+class Informative extends Service {
     constructor() {
-        this.userService = new UserService();
+        super('informative');
     }
 
-    insert = async ({
-        token,
-        ownerId,
-        title,
-        content,
-    }) => {
+    async insert({ token, ownerId, title, content }) {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allwdProf.create });
+            await super.insert({ token });
             const info = await db.informative.create({
                 id: uuid.v4(),
                 owner: ownerId,
@@ -29,40 +23,10 @@ class Informative {
         }
     }
 
-    get = async () => {
+    async update({ token, id, ownerId,
+        title = undefined, content = undefined }) {
         try {
-            const informatives = await db.informative.findAll();
-            return informatives;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    getById = async ({ id }) => {
-        try {
-            const informative = await db.informative.findByPk(id);
-            return informative;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    update = async ({ 
-        token,
-        id,
-        userId,
-        title = undefined,
-        content = undefined,
-    }) => {
-        try {
-            let informative = await db.informative.findByPk(id);
-            if (!informative) throw new Error('Informative not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (userId !== informative.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
+            let informative = await super.update({ token, ownerId, id});
             await db.informative.update({
                 title: title ? title : informative.title,
                 content: content ? content : informative.content,
@@ -70,25 +34,9 @@ class Informative {
                 where: { id },
             });
             informative = await db.informative.findByPk(id);
-            return informative.get();
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    delete = async ({ token, id, userId }) => {
-        try {
-            const informative = await db.informative.findByPk(id);
-            if (!informative) throw new Error('Informative not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (userId !== informative.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-            informative.destroy();
             return informative;
         } catch (err) {
-            throw (err);
+            throw err;
         }
     }
 }

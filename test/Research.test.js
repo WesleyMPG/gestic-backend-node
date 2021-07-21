@@ -111,4 +111,5 @@ describe('Testing research group routes', () => {
             .get('/research/' + researchId);
         expect(resGet.ok).toBeFalsy();
     })
+    
 })

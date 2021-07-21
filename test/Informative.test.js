@@ -9,7 +9,7 @@ let coordToken = null;
 let infoId = null;
 
 describe('Testing informatives routes', () => {
-    
+
     beforeAll(async () =>{
         const res = await request(app)
             .post('/access/login')
@@ -56,7 +56,7 @@ describe('Testing informatives routes', () => {
         expect(res.ok).toBeTruthy();
         expect(res.body).toHaveProperty('id', 'title', 'content');
         expect(res.body.content).toEqual('content');
-    }) 
+    })
 
     it('Should get a informative by its id', async () => {
         const res = await request(app)
@@ -70,5 +70,8 @@ describe('Testing informatives routes', () => {
             .delete('/informative/' + infoId)
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
+        const resGet = await request(app)
+            .get('/informative/' + infoId);
+        expect(resGet.ok).toBeFalsy();
     })
 })

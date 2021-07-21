@@ -48,30 +48,21 @@ paths:
         "200":
           description: "Successful login. profileTag can be ALUN or MONI or COOR or PROF."
           schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-                format: "uuid"
-              profileId:
-                type: "string"
-                format: "uuid"
-              name:
-                type: "string"
-              email:
-                type: "string"
-              password:
-                type: "string"
-              status:
-                type: "boolean"
-              profileTag:
-                type: "string"
-              auth:
-                type: "boolean"
-              token:
-                example: 	"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA4OTI5NzE4LTU0ZGEtNDVmNy04YTVjLTQ2ZTg
-                1ZTFjNzc2YyIsInByb2ZpbGVJZCI6IjIxZjMzOTJkLWZiZGMtNGNiMC04ZTNjLTVhMTFkNmMwNjlmMSIsImlhdCI6MTYxOTA1ODc3NSwiZXhw
-                IjoxNjE5MDU5Njc1fQ.OpZp7wcmzolDnIZ12N2FVOQgrIhui6G0Ok6IEitRcUw"
+            allOf:
+              - $ref: "#/components/schemas/User"
+              - type: "object"
+                properties:
+                  password:
+                    type: "string"
+                    example: "******"
+                  profileTag:
+                    type: "string"
+                  auth:
+                    type: "boolean"
+                  token:
+                    example: 	"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA4OTI5NzE4LTU0ZGEtNDVmNy04YTVjLTQ2ZTg
+                    1ZTFjNzc2YyIsInByb2ZpbGVJZCI6IjIxZjMzOTJkLWZiZGMtNGNiMC04ZTNjLTVhMTFkNmMwNjlmMSIsImlhdCI6MTYxOTA1ODc3NSwiZXhw
+                    IjoxNjE5MDU5Njc1fQ.OpZp7wcmzolDnIZ12N2FVOQgrIhui6G0Ok6IEitRcUw"
         "500":
           description: "Unsuccessful login"
           schema:
@@ -103,29 +94,19 @@ paths:
               type: "string"
             password:
               type: "string"
+              example: "******"
       responses:
         "200":
           description: "Successful registration"
           schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-                format: "uuid"
-              profileId:
-                type: "string"
-                format: "uuid"
-              name:
-                type: "string"
-              email:
-                type: "string"
-              password:
-                type: "string"
-              status:
-                type: "boolean"
-              profileTag:
-                type: "string"
-                example: "ALUN"
+            allOf:
+              - $ref: "#/components/schemas/User"
+              - type: "object"
+                properties:
+                  password:
+                    type: "string"
+                  profileTag:
+                    type: "string"
         "500":
           description: "Unsuccessful registration"
           schema:
@@ -187,22 +168,6 @@ paths:
         "200":
           description: "Successful update"
           schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-                format: "uuid"
-              profileId:
-                type: "string"
-                format: "uuid"
-              name:
-                type: "string"
-              email:
-                type: "string"
-              password:
-                type: "string"
-              status:
-                type: "boolean"
         "500":
           description: "Unsuccessful update"
           schema:
@@ -267,23 +232,14 @@ paths:
         "200":
           description: "Returned the user"
           schema:
-            type: "array"
-            items:
-              type: "object"
+            allOf:
+            - $ref: "#/components/schemas/User"
+            - type: "object"
               properties:
-                id:
+                password:
                   type: "string"
-                  format: "uuid"
-                profileId:
+                profileTag:
                   type: "string"
-                  format: "uuid"
-                name:
-                  type: "string"
-                email:
-                  type: "string"
-                status:
-                  type: "boolean"
-                  example: false
         "500":
           description: "Could not return the user"
           schema:
@@ -1630,21 +1586,8 @@ paths:
             type: "array"
             produces: "application/json"
             items:
-              type: "object"
-              properties:
-                id:
-                  type: "string"
-                  format: "uuid"
-                start:
-                  type: "string"
-                  format: "date-time"
-                end:
-                  type: "string"
-                  format: "date-time"
-                title:
-                  type: "string"
-                description:
-                  type: "string"
+              schema:
+                $ref: "#/components/schemas/Event"
         "500":
           description: "Could not obtain a list of all events"
           schema:
@@ -1755,10 +1698,25 @@ paths:
               message:
                 type: "string"
 
-
 components:
   schemas:
-    Event:
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        profileId:
+          type: "string"
+          format: "uuid"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        status:
+          type: "boolean"
+
+      Event:
       type: "object"
       properties:
         id:

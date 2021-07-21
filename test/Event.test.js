@@ -9,7 +9,7 @@ let coordToken = null;
 let itemId = null;
 
 describe('Testing event routes', () => {
-    
+
     beforeAll(async () =>{
         const res = await request(app)
             .post('/access/login')
@@ -42,7 +42,7 @@ describe('Testing event routes', () => {
             })
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
-        expect(res.body).toHaveProperty('id', 'start', 'end', 
+        expect(res.body).toHaveProperty('id', 'start', 'end',
         'title', 'description');
         itemId = res.body.id;
     })
@@ -57,18 +57,18 @@ describe('Testing event routes', () => {
             })
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
-        expect(res.body).toHaveProperty('id', 'start', 'end', 
+        expect(res.body).toHaveProperty('id', 'start', 'end',
         'title', 'description');
         console.log(res.body.end);
         expect(new Date(res.body.end))
             .toEqual(new Date("2021-06-22T00:59:59"));
-    }) 
+    })
 
     it('Should get a event by its id', async () => {
         const res = await request(app)
             .get('/event/' + itemId)
         expect(res.ok).toBeTruthy();
-        expect(res.body).toHaveProperty('id', 'start', 'end', 
+        expect(res.body).toHaveProperty('id', 'start', 'end',
         'title', 'description');
     })
 
@@ -77,5 +77,8 @@ describe('Testing event routes', () => {
             .delete('/event/' + itemId)
             .set('Authorization', coordToken);
         expect(res.ok).toBeTruthy();
+        const resGet = await request(app)
+            .get('/event/' + itemId);
+        expect(resGet.ok).toBeFalsy();
     })
 })

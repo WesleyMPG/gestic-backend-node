@@ -59,7 +59,7 @@ router.delete('/members', verifyJWT, async (req, res) => {
 
 router.get('/all/:type?',  async (req, res) => {
     try {
-        const result = await projectService.getProjects({
+        const result = await projectService.getAll({
             ...req.params });
         res.status(200).json(result);
     } catch (err) {

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const result = await groupService.getGroups();
+        const result = await groupService.getAll();
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

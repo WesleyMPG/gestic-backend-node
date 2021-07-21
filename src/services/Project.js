@@ -1,50 +1,39 @@
-require('dotenv/config');
-
-const UserService = require("./User")
-const allwdProf = require('../config/permissions.json').project;
+const UserService = require("./User");
+const Service = require('./Service');
 const db = require('../database/models')
 const uuid = require('uuid');
 
-class Project {
+class Project extends Service{
     constructor() {
-        this.userService = new UserService();
+        super("project");
     }
 
-    insert = async ({
-        token,
-        ownerId,
-        name,
-        description,
-        type,
-    }) => {
+    async insert({ token, ownerId, name,
+        description, type }) {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allwdProf.create });
-
-            const user = await db.user.findByPk(ownerId);
-            if (!user) throw new Error('Invalid user.');
-            const project = await db.project.create({
+            await super.insert({ token });
+            const project = await this.db.create({
                 id: uuid.v4(),
                 owner: ownerId,
                 name,
                 description,
                 type,
             });
-            return project.get();
+            return project;
         } catch (err) {
             throw err;
         }
     }
 
-    getProjects = async ({ type = undefined }) => {
+    async getAll({ type = undefined }){
         try {
             let projects;
             if (type) {
-                projects = await db.project.findAll({
+                projects = await this.db.findAll({
                     where: { type }
                 })
             } else {
-                projects = await db.project.findAll();
+                projects = await this.db.findAll();
             }
             return projects;
         } catch (err) {
@@ -52,94 +41,53 @@ class Project {
         }
     }
 
-    getById = async ({
-        id
-    }) => {
+    async getById({ id }){
         try {
-            const selectedProject = await db.project.findByPk(id, {
-                include: { 
+            const options = {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },
                 }
+            };
+            return await super.getById({id, options});
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async update({ token, id, ownerId,
+        newOwner = undefined, name = undefined,
+        description = undefined, type = undefined, }){
+        try {
+            let project = await super.update({ token, ownerId, id });
+            await this.db.update({
+                owner: newOwner ? newOwner : ownerId,
+                name: name ? name : project.name,
+                description: description ? description : project.description,
+                type: type ? type : project.type,
+            },
+            {
+                where: { id }
             });
-            if (!selectedProject) throw new Error('Project not found.');
-            return selectedProject.get();
+            project = await this.db.findByPk(id);
+            return project;
         } catch (err) {
             throw err;
         }
     }
 
-    update = async ({
-        token,
-        id,
-        ownerId,
-        newOwner = undefined,
-        name = undefined,
-        description = undefined,
-        type = undefined,
-    }) => {
+    async insertMember({ token, id, userId, ownerId }) {
         try {
-            let project = await db.project.findByPk(id);
-            if (!project) throw new Error('Project not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== project.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
-            await db.project.update(
-                {
-                    owner: newOwner ? newOwner : ownerId,
-                    name: name ? name : project.name,
-                    description: description ? description : project.description,
-                    type: type ? type : project.type,
-                },
-                {
-                    where: {
-                        id
-                    }
-                }
+            let project = await this._validateEditOperation(
+                { token, id, ownerId }
             );
-            project = await db.project.findByPk(id);
-            return project.get();
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    delete = async ({ token, id, ownerId }) => {
-        try {
-            let project = await db.project.findByPk(id);
-            if (!project) throw new Error('Project not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== project.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
-            await project.destroy();
-            return project.get();
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    insertMember = async ({ token, id, userId, ownerId })  => {
-        try {
-            let project = await db.project.findByPk(id);
-            if (!project) throw new Error('Project not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== project.owner && !isAdmin)
-                throw new Error('You have no permission to do this.');
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
             await project.addMember(user);
-            project = await db.project.findByPk(id, {
-                include: { 
+            project = await this.db.findByPk(id, {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },
@@ -151,21 +99,17 @@ class Project {
         }
     }
 
-    deleteMember = async ({token, id, userId, ownerId}) => {
+    async deleteMember({token, id, userId, ownerId}){
         try {
-            let project = await db.project.findByPk(id);
-            if (!project) throw new Error('Project not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== project.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
+            let project = await this._validateEditOperation(
+                { token, id, ownerId }
+            );
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
             await project.removeMember(user);
-            project = await db.project.findByPk(id, {
-                include: { 
+            project = await this.db.findByPk(id, {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },
@@ -176,7 +120,6 @@ class Project {
             throw err;
         }
     }
-
 }
 
 

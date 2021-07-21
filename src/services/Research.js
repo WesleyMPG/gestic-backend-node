@@ -1,79 +1,50 @@
 const UserService = require('./User');
-const allwdProf = require('../config/permissions.json').researchGroup;
+const Service = require('./Service');
 const db = require('../database/models');
 const uuid = require('uuid');
 
-class ResearchGroup {
+class ResearchGroup extends Service {
     constructor() {
-        this.userService = new UserService();
+        super("research");
     }
 
-    insert = async ({
-        token,
-        ownerId,
-        name,
-        description,
-        activities,
-    }) => {
+    async insert({ token, ownerId, name,
+        description, activities }) {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allwdProf.create });
-            const group = await db.research.create({
+            await super.insert({ token });
+            const group = await this.db.create({
                 id: uuid.v4(),
                 owner: ownerId,
                 name,
                 description,
-                activities});
+                activities });
             return group;
         } catch (err) {
             throw err;
         }
     }
 
-    getGroups = async () => {
+    async getById({ id }) {
         try {
-            const groups = await db.research.findAll();
-            return groups;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    getById = async ({ id }) => {
-        try {
-            const group = await db.research.findByPk(id, {
-                include: { 
+            const options =  {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },
                 }
-            });
-            if (!group) throw new Error('Research group not found.');
-            return group;
+            };
+            return await super.getById({ id, options });
         } catch (err) {
             throw err;
         }
     }
 
-    update = async ({
-        token,
-        id,
-        ownerId,
-        newOwner = undefined,
-        name = undefined,
-        description = undefined,
-        activities = undefined,
-    }) => {
+    async update({ token, id, ownerId, newOwner = undefined,
+        name = undefined, description = undefined,
+        activities = undefined, }) {
         try {
-            let research = await db.research.findByPk(id);
-            if (!research) throw new Error('Research not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== research.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
-            await db.research.update({
+            let research = await super.update({ token, ownerId, id});
+            await this.db.update({
                 owner: newOwner ? newOwner : ownerId,
                 name: name ? name : research.name,
                 description: description ? description : research.description,
@@ -82,46 +53,24 @@ class ResearchGroup {
             {
                 where: { id }
             });
-            research = await db.research.findByPk(id);
+            research = await this.db.findByPk(id);
             return research;
         } catch (err) {
             throw err;
         }
     }
 
-    delete = async ({ token, id, ownerId }) => {
+    async insertMember({ token, id, userId, ownerId}) {
         try {
-            const research = await db.research.findByPk(id);
-            if (!research) throw new Error('Research not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== research.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
-            await research.destroy();
-            return research.get();
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    insertMember = async ({ token, id, userId, ownerId})  => {
-        try {
-            let research = await db.research.findByPk(id);
-            if (!research) throw new Error('Research not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== research.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
+            let research = await this._validateEditOperation(
+                { token, id, ownerId}
+            );
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
-
             await research.addMember(user);
-            research = await db.research.findByPk(id, {
-                include: { 
+            research = await this.db.findByPk(id, {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },
@@ -133,22 +82,17 @@ class ResearchGroup {
         }
     }
 
-    deleteMember = async ({token, id, userId, ownerId}) => {
+    async deleteMember({token, id, userId, ownerId}) {
         try {
-            let research = await db.research.findByPk(id);
-            if (!research) throw new Error('Research not found.');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== research.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
+            let research = await this._validateEditOperation(
+                { token, id, ownerId}
+            );
 
             const user = await db.user.findByPk(userId);
             if (!user) throw new Error('User not found.');
-
             await research.removeMember(user);
-            research = await db.research.findByPk(id, {
-                include: { 
+            research = await this.db.findByPk(id, {
+                include: {
                     association: 'members',
                     attributes: ['id', 'name', 'email'],
                     through: { attributes: [] },

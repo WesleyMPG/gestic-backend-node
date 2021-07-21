@@ -1,31 +1,19 @@
 require('dotenv/config');
-
 const UserService = require('./User');
+const Service = require('./Service');
 const db = require('../database/models')
-const allwdProf = require('../config/permissions.json').offer;
-const { UUID } = require('sequelize');
 const uuid = require('uuid');
 
-class Offer {
+class Offer extends Service {
     constructor() {
-        this.userService = new UserService();
+        super('offer');
     }
 
-    insert = async ({
-        token,
-        ownerId,
-        name,
-        code,
-        codeClassroom,
-        linkClassroom,
-        linkMeets,
-        linkWpp,
-        linkTel
-    }) => {
+    async insert({ token, ownerId, name, code,
+        codeClassroom, linkClassroom, linkMeets,
+        linkWpp, linkTel }) {
         try {
-            await this.userService.verifyUserProfile({
-                token, validProfileTags: allwdProf.create });
-
+            await super.insert({ token });
             const insertedOffer = await db.offer.create({
                 id: uuid.v4(),
                 owner: ownerId,
@@ -43,32 +31,10 @@ class Offer {
         }
     }
 
-    getOffers = async (
-    ) => {
-        try {
-            const offers = await db.offer.findAll();
-            return offers;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    getById = async ({
-        id,
-    }) => {
-        try {
-            const offer = await db.offer.findByPk(id);
-            if (!offer) throw new Error('Offer Not found.');
-            return offer;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    update = async ({
+    async update ({
         token,
         id,
-        userId,
+        ownerId,
         name = undefined,
         code = undefined,
         codeClassroom = undefined,
@@ -76,17 +42,9 @@ class Offer {
         linkMeets = undefined,
         linkWpp = undefined,
         linkTel = undefined
-
-    }) => {
+    }) {
         try {
-            let offer = await db.offer.findByPk(id);
-            if (!offer) throw new Error('Invalid Id');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (userId !== offer.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
+            let offer = await super.update({ token, ownerId, id });
             await db.offer.update(
                 {
                     name: name ? name : offer.name,
@@ -107,33 +65,10 @@ class Offer {
         }
     }
 
-    deleteById = async ({
-        token,
-        id,
-        userId
-    }) => {
-        try {
-            const offer = await db.offer.findByPk(id);
-            if (!offer) throw new Error('Invalid Id');
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (userId !== offer.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-
-            await offer.destroy()
-            return offer.get();
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    deleteOffers = async (
-        token
-    ) => {
+    async deleteAll(token) {
         try {
             await this.userService.verifyUserProfile({
-                token, validProfileTags: allwdProf.deleteAll });
+                token, validProfileTags: this.allwdProf.deleteAll });
 
             const offers = await db.offer.findAll();
             for (let i = 0; i < offers.length; ++i) {

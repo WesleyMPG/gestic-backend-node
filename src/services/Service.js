@@ -14,6 +14,22 @@ class Service {
         this.allwdProf = allwdProf[modelName];
     }
 
+    async _validateEditOperation({ token, id, ownerId }) {
+        try {
+            const item = await this.db.findByPk(id);
+            if (!item)
+                throw new Error(`${this.modelName.capitalize()} not found.`);
+            const isAdmin = await this.userService.validateUserProfile({
+                token, validProfileTags: allwdProf.edit });
+            const isOwner = ownerId === item.owner;
+            if (!isOwner && !isAdmin)
+                throw new Error('You have no permission to do this.');
+            return item;
+        } catch (err) {
+            throw err;
+        }
+    }
+
     async insert({ token, } ) {
         try {
             await this.userService.verifyUserProfile({
@@ -32,42 +48,37 @@ class Service {
         }
     }
 
-    async getById ({ id }) {
+    async getById ({ id, options=undefined }) {
         try {
-            const item = await this.db.findByPk(id);
+            let item;
+            if (options) {
+                item = await this.db.findByPk(id, options);
+            }else {
+                item = await this.db.findByPk(id);
+            }
+            if (!item)
+                throw new Error(`${this.modelName.capitalize()} not found.`);
             return item;
         } catch (err) {
             throw err;
         }
     }
 
-    async update ({ token, ownerId, id }) {
+    // args = { token, id, ownerId }
+    async update (args) {
         try {
-            let item = await this.db.findByPk(id);
-            if (!item) 
-                throw new Error(`${this.modelName.capitalize()} not found.`);
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== item.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
+            const item = await this._validateEditOperation(args);
             return item;
         } catch (err) {
             throw err;
         }
     }
 
-    async delete ({ token, id, ownerId }) {
+    // args = { token, id, ownerId }
+    async delete (args) {
         try {
-            const item = await this.db.findByPk(id);
-            if (!item) 
-                throw new Error(`${this.modelName.capitalize()} not found.`);
-
-            const isAdmin = await this.userService.validateUserProfile({
-                token, validProfileTags: allwdProf.edit });
-            if (ownerId !== item.owner && !isAdmin) 
-                throw new Error('You have no permission to do this.');
-            item.destroy();
+            const item = await this._validateEditOperation(args);
+            await item.destroy();
             return item;
         } catch (err) {
             throw (err);

@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const result = await informativeService.get({ ...req.body });
+        const result = await informativeService.getAll({ ...req.body });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -34,9 +34,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.insert({
-            ...req.body, token: req.token,
-            ownerId: req.userId
-        });
+            ...req.body, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -49,7 +47,7 @@ router.post('/', verifyJWT, async (req, res) => {
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.update({
-            ...req.body, token: req.token, userId: req.userId });
+            ...req.body, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -62,7 +60,7 @@ router.put('/', verifyJWT, async (req, res) => {
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
         const result = await informativeService.delete({
-            ...req.params, token: req.token });
+            ...req.params, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

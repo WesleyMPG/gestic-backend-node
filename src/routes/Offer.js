@@ -18,22 +18,10 @@ router.post('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.get('/', async (req, res) => {
-    try {
-        const result = await offerService.getOffers();
-        res.status(200).json(result);
-    } catch (err) {
-        console.log(err);
-        (err.code) ?
-            res.status(500).json({ message: "Server Internal Error." }) :
-            res.status(500).json({ message: err.message });
-    }
-})
-
 router.put('/', verifyJWT, async (req, res) => {
     try {
         const result = await offerService.update({
-            ...req.body, token: req.token, userId: req.userId });
+            ...req.body, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -43,9 +31,9 @@ router.put('/', verifyJWT, async (req, res) => {
     }
 })
 
-router.delete('/', verifyJWT, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const result = await offerService.deleteOffers(req.token);
+        const result = await offerService.getAll();
         res.status(200).json(result);
     } catch (err) {
         console.log(err);
@@ -67,10 +55,22 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.delete('/', verifyJWT, async (req, res) => {
+    try {
+        const result = await offerService.deleteAll(req.token);
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        (err.code) ?
+            res.status(500).json({ message: "Server Internal Error." }) :
+            res.status(500).json({ message: err.message });
+    }
+})
+
 router.delete('/:id', verifyJWT, async (req, res) => {
     try {
-        const result = await offerService.deleteById({
-            ...req.params, token: req.token, userId: req.userId });
+        const result = await offerService.delete({
+            ...req.params, token: req.token, ownerId: req.userId });
         res.status(200).json(result);
     } catch (err) {
         console.log(err);

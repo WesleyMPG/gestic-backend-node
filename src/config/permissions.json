@@ -1,5 +1,5 @@
 {
-  "researchGroup": {
+  "research": {
     "create": ["COOR", "TEC", "PROF"],
     "edit": ["TEC", "COOR"]
   },
